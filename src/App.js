@@ -208,7 +208,7 @@ function App() {
         <div
           style={{
             position: "absolute",
-            bottom: "40px",
+            bottom: "70px",
             left: "50%",
             transform: "translateX(-50%)",
             fontSize: "5rem",
@@ -222,7 +222,7 @@ function App() {
           {`${padNumber(seconds, 2)}`}
         </div>
       )}
-      <HStack position="absolute" bottom="40px" left="40px">
+      <HStack position="absolute" bottom="30px" left="30px">
         <Button colorScheme="orange" onClick={togglePlayPause}>
           {playing ? <MusicNoteIcon /> : <MusicOffIcon />}
         </Button>

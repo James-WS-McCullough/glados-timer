@@ -1,7 +1,17 @@
 import React, { useState } from "react";
-import { Button, Box, Input, VStack } from "@chakra-ui/react";
-import styled from "@emotion/styled";
-import { keyframes } from "@emotion/react";
+import {
+  Button,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  VStack,
+  useDisclosure,
+} from "@chakra-ui/react";
 import {
   AppContainer,
   FaceBackImage,
@@ -19,9 +29,40 @@ function App() {
   const [hours, setHours] = useState("");
   const [minutes, setMinutes] = useState("");
   const [seconds, setSeconds] = useState("");
+  const [timerActive, setTimerActive] = useState(false);
+  const {
+    isOpen: isOpenSetTimer,
+    onOpen: onOpenSetTimer,
+    onClose: onCloseSetTimer,
+  } = useDisclosure();
 
-  const padNumber = (num) => {
-    return String(num).padStart(3, "0");
+  // If the timer is active, subtract 1 second from the timer every second
+  React.useEffect(() => {
+    let interval = null;
+    if (timerActive) {
+      interval = setInterval(() => {
+        if (seconds > 0) {
+          setSeconds(seconds - 1);
+        } else if (minutes > 0) {
+          setMinutes(minutes - 1);
+          setSeconds(59);
+          playTimeSound({ minutes: minutes });
+        } else if (hours > 0) {
+          setHours(hours - 1);
+          setMinutes(59);
+          setSeconds(59);
+        } else {
+          setTimerActive(false);
+        }
+      }, 1000);
+    } else if (!timerActive && seconds !== 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [timerActive, seconds, minutes, hours]);
+
+  const padNumber = (num, digits = 3) => {
+    return String(num).padStart(digits, "0");
   };
 
   const playTimeUnitSound = (num, unit, callback) => {
@@ -68,7 +109,7 @@ function App() {
     outroAudio.play();
   };
 
-  const playTimeSound = () => {
+  const playTimeSound = ({ hours, minutes, seconds }) => {
     playIntroSound(() => {
       if (hours) {
         playTimeUnitSound(parseInt(hours, 10), "Hours", () => {
@@ -137,24 +178,77 @@ function App() {
           alt="Face Outer Cover"
         />
       </FaceLayersContainer>
-      {/* <VStack spacing={4}>
-        <Input
-          value={hours}
-          onChange={(e) => setHours(e.target.value)}
-          placeholder="Enter hours (0-99)"
-        />
-        <Input
-          value={minutes}
-          onChange={(e) => setMinutes(e.target.value)}
-          placeholder="Enter minutes (0-59)"
-        />
-        <Input
-          value={seconds}
-          onChange={(e) => setSeconds(e.target.value)}
-          placeholder="Enter seconds (0-59)"
-        />
-        <Button onClick={playTimeSound}>Play Time</Button>
-      </VStack> */}
+      {!timerActive && (
+        <Button
+          position="absolute"
+          bottom="40px"
+          colorScheme="orange"
+          fontStyle="bold"
+          size="lg"
+          onClick={onOpenSetTimer}
+        >
+          BEGIN
+        </Button>
+      )}
+      {timerActive && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: "40px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            fontSize: "5rem",
+            fontWeight: "bold",
+            color: "white",
+          }}
+        >
+          {hours ? `${hours}:` : ""}
+          {minutes ? `${minutes}:` : ""}
+          {seconds ? `${padNumber(seconds, 2)}` : ""}
+        </div>
+      )}
+      // A modal to set the timer
+      <Modal isOpen={isOpenSetTimer} onClose={onCloseSetTimer}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Set Timer</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack spacing={4}>
+              <Input
+                value={hours}
+                onChange={(e) => setHours(e.target.value)}
+                placeholder="Enter hours (0-99)"
+              />
+              <Input
+                value={minutes}
+                onChange={(e) => setMinutes(e.target.value)}
+                placeholder="Enter minutes (0-59)"
+              />
+              <Input
+                value={seconds}
+                onChange={(e) => setSeconds(e.target.value)}
+                placeholder="Enter seconds (0-59)"
+              />
+            </VStack>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button
+              colorScheme="orange"
+              onClick={() => {
+                setTimerActive(true);
+                onCloseSetTimer();
+              }}
+            >
+              Set Timer
+            </Button>
+            <Button variant="ghost" mr={3} onClick={onCloseSetTimer}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </AppContainer>
   );
 }

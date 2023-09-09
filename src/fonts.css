@@ -1,0 +1,6 @@
+@font-face {
+  font-family: "DINBold"; /* A name to refer to the font by later in your CSS */
+  src: url("/fonts/DINBold.ttf") format("truetype"); /* Path to the font file */
+  font-weight: bold; /* Specify the font weight; if it's a bold variant */
+  font-style: normal; /* Specify the font style */
+}

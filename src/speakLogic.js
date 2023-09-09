@@ -25,27 +25,15 @@ export const speakOppertunity = ({
   // Random number 1 to 10
   const randomNum = Math.floor(Math.random() * 10) + 1;
 
-  if (randomNum <= 5) {
-    //Todo: set back to 2 when more random lines are added
+  if (randomNum <= 4) {
     playRandomNumberLine({
       minutes: minutes,
       callback: () => setIsSpeaking(false),
     });
     return;
-  }
-  if (randomNum > 2 && randomNum <= 3) {
-    playSimpleTime({ minutes: minutes, callback: () => setIsSpeaking(false) });
-    return;
-  }
-  if (randomNum > 3 && randomNum <= 8) {
-    playSimpleTimeThenRandomLine({
+  } else {
+    playSimpleTimeAndRandomLine({
       minutes: minutes,
-      callback: () => setIsSpeaking(false),
-    });
-    return;
-  }
-  if (randomNum > 8) {
-    justPlayRandomLine({
       callback: () => setIsSpeaking(false),
     });
     return;
@@ -213,7 +201,7 @@ const playRandomNumberLine = ({ minutes, callback }) => {
   });
 };
 
-const playSimpleTimeThenRandomLine = ({ minutes, callback }) => {
+const playSimpleTimeAndRandomLine = ({ minutes, callback }) => {
   const lineNumber = Math.floor(Math.random() * 3) + 1;
 
   let playBefore = true;

@@ -117,7 +117,8 @@ const checkSpesificCases = ({
   return false;
 };
 
-export const playStartLine = ({ setIsSpeaking }) => {
+export const playStartLine = ({ setIsSpeaking, isSpeaking }) => {
+  if (isSpeaking) return;
   setIsSpeaking(true);
   playSpesificLineRandom({
     line: "Glados_Line_TimerStart",
@@ -131,6 +132,56 @@ export const playEndLine = ({ setIsSpeaking }) => {
   playSpesificLineRandom({
     line: "Glados_Line_TimeUp",
     maxNumber: 3,
+    callback: () => setIsSpeaking(false),
+  });
+};
+
+export const playPauseLine = ({ setIsSpeaking, isSpeaking }) => {
+  if (isSpeaking) return;
+  setIsSpeaking(true);
+  playSpesificLineRandom({
+    line: "Glados_Line_Pause",
+    maxNumber: 5,
+    callback: () => setIsSpeaking(false),
+  });
+};
+
+export const playWelcomeLine = ({ setIsSpeaking, isSpeaking }) => {
+  if (isSpeaking) return;
+  setIsSpeaking(true);
+  playSpesificLineRandom({
+    line: "Glados_Line_Welcome",
+    maxNumber: 8,
+    callback: () => setIsSpeaking(false),
+  });
+};
+
+export const playSettingsLine = ({ setIsSpeaking, isSpeaking }) => {
+  if (isSpeaking) return;
+  setIsSpeaking(true);
+  playSpesificLineRandom({
+    line: "Glados_Line_Settings",
+    maxNumber: 3,
+    callback: () => setIsSpeaking(false),
+  });
+};
+
+export const playResetLine = ({ setIsSpeaking, isSpeaking }) => {
+  if (isSpeaking) return;
+  setIsSpeaking(true);
+  playSpesificLineRandom({
+    line: "Glados_Line_Reset",
+    maxNumber: 3,
+    callback: () => setIsSpeaking(false),
+  });
+};
+
+export const playByeLine = ({ setIsSpeaking, isSpeaking }) => {
+  if (isSpeaking) return;
+  setIsSpeaking(true);
+  playSpesificLineRandom({
+    line: "Glados_Line_Bye",
+    maxNumber: 2,
     callback: () => setIsSpeaking(false),
   });
 };

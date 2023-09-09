@@ -27,7 +27,19 @@ import {
 } from "./animationAndImageFormatting";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import MusicOffIcon from "@mui/icons-material/MusicOff";
-import { playEndLine, playStartLine, speakOppertunity } from "./speakLogic";
+import SettingsIcon from "@mui/icons-material/Settings";
+import PauseIcon from "@mui/icons-material/Pause";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import StopIcon from "@mui/icons-material/Stop";
+import {
+  playEndLine,
+  playPauseLine,
+  playResetLine,
+  playSettingsLine,
+  playStartLine,
+  playWelcomeLine,
+  speakOppertunity,
+} from "./speakLogic";
 import { padNumber } from "./utils";
 
 function App() {
@@ -53,6 +65,11 @@ function App() {
     isOpen: isOpenSetTimer,
     onOpen: onOpenSetTimer,
     onClose: onCloseSetTimer,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenSettings,
+    onOpen: onOpenSettings,
+    onClose: onCloseSettings,
   } = useDisclosure();
 
   useEffect(() => {
@@ -123,6 +140,24 @@ function App() {
     });
   };
 
+  const handleSetTimer = () => {
+    const hours = timeInput.hours ? parseInt(timeInput.hours, 10) : 0;
+    const minutes = timeInput.minutes ? parseInt(timeInput.minutes, 10) : 0;
+    const seconds = timeInput.seconds ? parseInt(timeInput.seconds, 10) : 0;
+    setHours(hours);
+    setMinutes(minutes);
+    setSeconds(seconds);
+    const totalTimeInSeconds = hours * 60 * 60 + minutes * 60 + seconds;
+    const halfTimeInSeconds = Math.floor(totalTimeInSeconds / 2);
+
+    setHalfWayPoint({
+      hours: Math.floor(halfTimeInSeconds / 60 / 60),
+      minutes: Math.floor((halfTimeInSeconds / 60) % 60),
+      seconds: Math.floor(halfTimeInSeconds % 60),
+    });
+    setTimerActive(true);
+  };
+
   return (
     <AppContainer>
       <FaceLayersContainer>
@@ -154,18 +189,21 @@ function App() {
           alt="Face Outer Cover"
         />
       </FaceLayersContainer>
-      {!timerActive && (
+      {!(seconds > 0 || minutes > 0 || hours > 0) && (
         <Button
           position="absolute"
           bottom="40px"
           colorScheme="orange"
           size="lg"
-          onClick={onOpenSetTimer}
+          onClick={() => {
+            onOpenSetTimer();
+            playWelcomeLine({ setIsSpeaking: setIsSpeaking, isSpeaking });
+          }}
         >
           BEGIN
         </Button>
       )}
-      {timerActive && (
+      {(seconds > 0 || minutes > 0 || hours > 0) && (
         <div
           style={{
             position: "absolute",
@@ -186,6 +224,60 @@ function App() {
         <Button colorScheme="orange" onClick={togglePlayPause}>
           {playing ? <MusicNoteIcon /> : <MusicOffIcon />}
         </Button>
+        <Button
+          colorScheme="orange"
+          onClick={() => {
+            onOpenSettings();
+            playSettingsLine({
+              setIsSpeaking: setIsSpeaking,
+              isSpeaking: isSpeaking,
+            });
+          }}
+        >
+          <SettingsIcon />
+        </Button>
+        {timerActive && (
+          <Button
+            colorScheme="orange"
+            onClick={() => {
+              setTimerActive(false);
+              playPauseLine({
+                setIsSpeaking: setIsSpeaking,
+                isSpeaking: isSpeaking,
+              });
+            }}
+          >
+            <PauseIcon />
+          </Button>
+        )}
+        {timerActive && (
+          <Button
+            colorScheme="orange"
+            onClick={() => {
+              setTimerActive(false);
+              setHours(0);
+              setMinutes(0);
+              setSeconds(0);
+              playResetLine({
+                setIsSpeaking: setIsSpeaking,
+                isSpeaking: isSpeaking,
+              });
+            }}
+          >
+            <StopIcon />
+          </Button>
+        )}
+        {!timerActive && (seconds > 0 || minutes > 0 || hours > 0) && (
+          <Button
+            colorScheme="orange"
+            onClick={() => {
+              setTimerActive(true);
+              //playStartLine({ setIsSpeaking: setIsSpeaking });
+            }}
+          >
+            <PlayArrowIcon />
+          </Button>
+        )}
       </HStack>
       <Modal isOpen={isOpenSetTimer} onClose={onCloseSetTimer}>
         <ModalOverlay />
@@ -222,35 +314,44 @@ function App() {
             <Button
               colorScheme="orange"
               onClick={() => {
-                const hours = timeInput.hours
-                  ? parseInt(timeInput.hours, 10)
-                  : 0;
-                const minutes = timeInput.minutes
-                  ? parseInt(timeInput.minutes, 10)
-                  : 0;
-                const seconds = timeInput.seconds
-                  ? parseInt(timeInput.seconds, 10)
-                  : 0;
-                setHours(hours);
-                setMinutes(minutes);
-                setSeconds(seconds);
-                const totalTimeInSeconds =
-                  hours * 60 * 60 + minutes * 60 + seconds;
-                const halfTimeInSeconds = Math.floor(totalTimeInSeconds / 2);
-
-                setHalfWayPoint({
-                  hours: Math.floor(halfTimeInSeconds / 60 / 60),
-                  minutes: Math.floor((halfTimeInSeconds / 60) % 60),
-                  seconds: Math.floor(halfTimeInSeconds % 60),
+                handleSetTimer();
+                playStartLine({
+                  setIsSpeaking: setIsSpeaking,
+                  isSpeaking: isSpeaking,
                 });
-                setTimerActive(true);
-                playStartLine({ setIsSpeaking: setIsSpeaking });
                 onCloseSetTimer();
               }}
             >
               Set Timer
             </Button>
             <Button variant="ghost" mr={3} onClick={onCloseSetTimer}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* Settings Modal */}
+      <Modal isOpen={isOpenSettings} onClose={onCloseSettings}>
+        <ModalOverlay />
+        <ModalContent backgroundColor="black" textColor="white">
+          <ModalHeader>Settings</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack spacing={4}>
+              <Button
+                colorScheme="orange"
+                onClick={() => {
+                  onCloseSettings();
+                  onOpenSetTimer();
+                }}
+              >
+                Set Timer
+              </Button>
+            </VStack>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={onCloseSettings}>
               Close
             </Button>
           </ModalFooter>

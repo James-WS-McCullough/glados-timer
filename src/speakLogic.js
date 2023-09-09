@@ -1,3 +1,4 @@
+import { randomLineTimePosition } from "./constants";
 import { padNumber } from "./utils";
 
 export const speakOppertunity = ({
@@ -24,18 +25,19 @@ export const speakOppertunity = ({
   // Random number 1 to 10
   const randomNum = Math.floor(Math.random() * 10) + 1;
 
-  if (randomNum <= 2) {
+  if (randomNum <= 5) {
+    //Todo: set back to 2 when more random lines are added
     playRandomNumberLine({
       minutes: minutes,
       callback: () => setIsSpeaking(false),
     });
     return;
   }
-  if (randomNum > 2 && randomNum <= 4) {
+  if (randomNum > 2 && randomNum <= 3) {
     playSimpleTime({ minutes: minutes, callback: () => setIsSpeaking(false) });
     return;
   }
-  if (randomNum > 4 && randomNum <= 8) {
+  if (randomNum > 3 && randomNum <= 8) {
     playSimpleTimeThenRandomLine({
       minutes: minutes,
       callback: () => setIsSpeaking(false),
@@ -69,7 +71,7 @@ const checkSpesificCases = ({
 
   // Chance to play a generic line instead of a spesific line
   const randomNum = Math.floor(Math.random() * 10) + 1;
-  if (randomNum <= 4) {
+  if (randomNum <= 2) {
     return false;
   }
 
@@ -198,7 +200,7 @@ const playSpesificLineRandom = ({ line, maxNumber, callback }) => {
 
 const playRandomNumberLine = ({ minutes, callback }) => {
   // Random number min 1 max 8
-  const randomNum = Math.floor(Math.random() * 8) + 1;
+  const randomNum = Math.floor(Math.random() * 7) + 1;
   // Play the intro sound, on callback play the time sound, on callback play the outro sound
   playIntroSound({
     number: randomNum,
@@ -212,16 +214,39 @@ const playRandomNumberLine = ({ minutes, callback }) => {
 };
 
 const playSimpleTimeThenRandomLine = ({ minutes, callback }) => {
-  playSimpleTime({
-    minutes: minutes,
-    callback: () => {
-      playSpesificLineRandom({
-        line: "Glados_Line_Random",
-        maxNumber: 3,
-        callback: callback,
-      });
-    },
-  });
+  const lineNumber = Math.floor(Math.random() * 3) + 1;
+
+  let playBefore = true;
+  if (randomLineTimePosition?.[lineNumber] === "a") {
+    playBefore = false;
+  } else if (randomLineTimePosition?.[lineNumber] === "e") {
+    const randomNum = Math.floor(Math.random() * 2) + 1;
+    if (randomNum === 1) {
+      playBefore = false;
+    }
+  }
+
+  if (playBefore) {
+    playSimpleTime({
+      minutes: minutes,
+      callback: () => {
+        playSound({
+          sound: `Glados_Line_Random_${lineNumber}`,
+          callback: callback,
+        });
+      },
+    });
+  } else {
+    playSound({
+      sound: `Glados_Line_Random_${lineNumber}`,
+      callback: () => {
+        playSimpleTime({
+          minutes: minutes,
+          callback: callback,
+        });
+      },
+    });
+  }
 };
 
 const justPlayRandomLine = ({ callback }) => {
@@ -283,8 +308,8 @@ const playNumberSound = (num, callback) => {
       audio.play();
       audio.onended = () => {
         const onesAudio = new Audio(`SFX/Glados_Number_${padNumber(ones)}.mp3`);
-        onesAudio.onended = callback; // Call the callback after ones sound has ended
         onesAudio.play();
+        onesAudio.onended = callback; // Call the callback after ones sound has ended
       };
     } else if (tens !== 0) {
       const audio = new Audio(`SFX/Glados_Number_${padNumber(tens)}.mp3`);
@@ -299,39 +324,47 @@ const playNumberSound = (num, callback) => {
 };
 
 const playIntroSound = ({ number, callback }) => {
-  // Check if the intro sound exists, if it does play it, if not directly call the callback
-  try {
-    const introAudio = new Audio(`SFX/Glados_NumberLine_Start_${number}.mp3`);
-    introAudio.onended = callback;
-    introAudio.play();
-  } catch (err) {
+  const introAudio = new Audio(`SFX/Glados_NumberLine_Start_${number}.mp3`);
+
+  introAudio.onerror = () => {
     callback();
-    return;
-  }
+  };
+
+  introAudio.onended = callback;
+
+  introAudio.play().catch((error) => {
+    callback();
+  });
 };
 
 const playOutroSound = ({ number, callback }) => {
   // Check if the outro sound exists, if it does play it, if not directly call the callback
-  try {
-    const outroAudio = new Audio(`SFX/Glados_NumberLine_End_${number}.mp3`);
-    outroAudio.play();
-    outroAudio.onended = callback;
-  } catch (err) {
+  const outroAudio = new Audio(`SFX/Glados_NumberLine_End_${number}.mp3`);
+
+  outroAudio.onerror = () => {
     callback();
-    return;
-  }
+  };
+
+  outroAudio.onended = callback;
+
+  outroAudio.play().catch((error) => {
+    callback();
+  });
 };
 
 const playSound = ({ sound, callback }) => {
   // Check if the sound exists, if it does play it, if not directly call the callback
-  try {
-    const audio = new Audio(`SFX/${sound}.mp3`);
-    audio.play();
-    audio.onended = callback;
-  } catch (err) {
+  const audio = new Audio(`SFX/${sound}.mp3`);
+
+  audio.onerror = () => {
     callback();
-    return;
-  }
+  };
+
+  audio.onended = callback;
+
+  audio.play().catch((error) => {
+    callback();
+  });
 };
 
 const playTimeSound = ({ hours, minutes, seconds, callback }) => {

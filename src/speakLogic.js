@@ -1,19 +1,151 @@
 import { padNumber } from "./utils";
 
-export const speakOppertunity = ({ hours, minutes, seconds }) => {
-  // Random number 1 to 3
-  const randomNum = Math.floor(Math.random() * 2) + 1;
-  // if number is 1, play the random number line, if 2 play simple time,
+export const speakOppertunity = ({
+  hours,
+  minutes,
+  seconds,
+  halfWayPoint,
+  isSpeaking,
+  setIsSpeaking,
+}) => {
+  // If the time equals the half way point, play the half way point sound
+  if (isSpeaking) return;
 
-  if (randomNum === 1) {
-    playRandomNumberLine({ minutes: minutes });
+  setIsSpeaking(true);
+  const isSpesificCase = checkSpesificCases({
+    hours: hours,
+    minutes: minutes,
+    seconds: seconds,
+    halfWayPoint: halfWayPoint,
+    setIsSpeaking: setIsSpeaking,
+  });
+  if (isSpesificCase) return;
+
+  // Random number 1 to 10
+  const randomNum = Math.floor(Math.random() * 10) + 1;
+
+  if (randomNum <= 2) {
+    playRandomNumberLine({
+      minutes: minutes,
+      callback: () => setIsSpeaking(false),
+    });
+    return;
   }
-  if (randomNum === 2) {
-    playSimpleTime({ minutes: minutes });
+  if (randomNum > 2 && randomNum <= 4) {
+    playSimpleTime({ minutes: minutes, callback: () => setIsSpeaking(false) });
+    return;
+  }
+  if (randomNum > 4 && randomNum <= 8) {
+    playSimpleTimeThenRandomLine({
+      minutes: minutes,
+      callback: () => setIsSpeaking(false),
+    });
+    return;
+  }
+  if (randomNum > 8) {
+    justPlayRandomLine({
+      callback: () => setIsSpeaking(false),
+    });
+    return;
   }
 };
 
-export const playRandomNumberLine = ({ minutes }) => {
+const checkSpesificCases = ({
+  hours,
+  minutes,
+  seconds,
+  halfWayPoint,
+  setIsSpeaking,
+}) => {
+  // If it's the half way point and the timer is greater than 14 seconds, play the half way point sound
+  if (hours === 0 && minutes === 0 && seconds === 10) {
+    playSpesificLineRandom({
+      line: "Glados_Line_10SecondsLeft",
+      maxNumber: 3,
+      callback: () => setIsSpeaking(false),
+    });
+    return true;
+  }
+
+  // Chance to play a generic line instead of a spesific line
+  const randomNum = Math.floor(Math.random() * 10) + 1;
+  if (randomNum <= 4) {
+    return false;
+  }
+
+  if (
+    hours === halfWayPoint.hours &&
+    minutes === halfWayPoint.minutes &&
+    seconds === halfWayPoint.seconds &&
+    seconds > 14
+  ) {
+    playSpesificLineRandom({
+      line: "Glados_Line_HalfWay",
+      maxNumber: 3,
+      callback: () => setIsSpeaking(false),
+    });
+    return true;
+  }
+
+  if (hours === 0 && minutes === 5 && seconds === 0) {
+    playSpesificLineRandom({
+      line: "Glados_Line_2MinuteLeft",
+      maxNumber: 3,
+      callback: () => setIsSpeaking(false),
+    });
+    return true;
+  }
+
+  if (hours === 0 && minutes === 2 && seconds === 0) {
+    playSpesificLineRandom({
+      line: "Glados_Line_2MinuteLeft",
+      maxNumber: 3,
+      callback: () => setIsSpeaking(false),
+    });
+    return true;
+  }
+
+  if (hours === 0 && minutes === 1 && seconds === 0) {
+    playSpesificLineRandom({
+      line: "Glados_Line_1MinuteLeft",
+      maxNumber: 3,
+      callback: () => setIsSpeaking(false),
+    });
+    return true;
+  }
+
+  return false;
+};
+
+export const playStartLine = ({ setIsSpeaking }) => {
+  setIsSpeaking(true);
+  playSpesificLineRandom({
+    line: "Glados_Line_TimerStart",
+    maxNumber: 3,
+    callback: () => setIsSpeaking(false),
+  });
+};
+
+export const playEndLine = ({ setIsSpeaking }) => {
+  setIsSpeaking(true);
+  playSpesificLineRandom({
+    line: "Glados_Line_TimeUp",
+    maxNumber: 3,
+    callback: () => setIsSpeaking(false),
+  });
+};
+
+const playSpesificLineRandom = ({ line, maxNumber, callback }) => {
+  // Random number min 1 max maxNumber
+  const randomNum = Math.floor(Math.random() * maxNumber) + 1;
+
+  playSound({
+    sound: `${line}_${randomNum}`,
+    callback: callback,
+  });
+};
+
+const playRandomNumberLine = ({ minutes, callback }) => {
   // Random number min 1 max 8
   const randomNum = Math.floor(Math.random() * 8) + 1;
   // Play the intro sound, on callback play the time sound, on callback play the outro sound
@@ -22,12 +154,34 @@ export const playRandomNumberLine = ({ minutes }) => {
     callback: () =>
       playMinutesSound({
         num: minutes,
-        callback: () => playOutroSound({ number: randomNum }),
+        callback: () =>
+          playOutroSound({ number: randomNum, callback: callback }),
       }),
   });
 };
 
-export const playSimpleTime = ({ minutes }) => {
+const playSimpleTimeThenRandomLine = ({ minutes, callback }) => {
+  playSimpleTime({
+    minutes: minutes,
+    callback: () => {
+      playSpesificLineRandom({
+        line: "Glados_Line_Random",
+        maxNumber: 3,
+        callback: callback,
+      });
+    },
+  });
+};
+
+const justPlayRandomLine = ({ callback }) => {
+  playSpesificLineRandom({
+    line: "Glados_Line_Random",
+    maxNumber: 3,
+    callback: callback,
+  });
+};
+
+const playSimpleTime = ({ minutes, callback }) => {
   // Random number min 1 max 3
   const randomIntroNum = Math.floor(Math.random() * 3) + 1;
   const randomOutroNum = Math.floor(Math.random() * 3) + 1;
@@ -40,12 +194,12 @@ export const playSimpleTime = ({ minutes }) => {
     callback: () =>
       playMinutesSound({
         num: minutes,
-        callback: () => playSound({ sound: outroSound }),
+        callback: () => playSound({ sound: outroSound, callback: callback }),
       }),
   });
 };
 
-export const playMinutesSound = ({ num, callback }) => {
+const playMinutesSound = ({ num, callback }) => {
   // Plays the number of minutes, then the minutes unit sound, then the callback
   // If 1 minute, play 60 seconds instead.
   if (num === 1) {
@@ -55,7 +209,7 @@ export const playMinutesSound = ({ num, callback }) => {
   }
 };
 
-export const playTimeUnitSound = (num, unit, callback) => {
+const playTimeUnitSound = (num, unit, callback) => {
   // Plays the number of minutes, then the minutes unit sound, then the callback
   playNumberSound(num, () => {
     const unitAudio = new Audio(`SFX/Glados_Number_${unit}.mp3`);
@@ -64,7 +218,7 @@ export const playTimeUnitSound = (num, unit, callback) => {
   });
 };
 
-export const playNumberSound = (num, callback) => {
+const playNumberSound = (num, callback) => {
   if (num >= 1 && num <= 19) {
     const audio = new Audio(`SFX/Glados_Number_${padNumber(num)}.mp3`);
     audio.play();
@@ -93,7 +247,7 @@ export const playNumberSound = (num, callback) => {
   }
 };
 
-export const playIntroSound = ({ number, callback }) => {
+const playIntroSound = ({ number, callback }) => {
   // Check if the intro sound exists, if it does play it, if not directly call the callback
   try {
     const introAudio = new Audio(`SFX/Glados_NumberLine_Start_${number}.mp3`);
@@ -105,7 +259,7 @@ export const playIntroSound = ({ number, callback }) => {
   }
 };
 
-export const playOutroSound = ({ number, callback }) => {
+const playOutroSound = ({ number, callback }) => {
   // Check if the outro sound exists, if it does play it, if not directly call the callback
   try {
     const outroAudio = new Audio(`SFX/Glados_NumberLine_End_${number}.mp3`);
@@ -117,7 +271,7 @@ export const playOutroSound = ({ number, callback }) => {
   }
 };
 
-export const playSound = ({ sound, callback }) => {
+const playSound = ({ sound, callback }) => {
   // Check if the sound exists, if it does play it, if not directly call the callback
   try {
     const audio = new Audio(`SFX/${sound}.mp3`);
@@ -129,7 +283,7 @@ export const playSound = ({ sound, callback }) => {
   }
 };
 
-export const playTimeSound = ({ hours, minutes, seconds, callback }) => {
+const playTimeSound = ({ hours, minutes, seconds, callback }) => {
   if (hours) {
     playTimeUnitSound(parseInt(hours, 10), "Hours", () => {
       if (minutes) {

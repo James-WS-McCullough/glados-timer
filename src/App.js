@@ -27,13 +27,25 @@ import {
 } from "./animationAndImageFormatting";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import MusicOffIcon from "@mui/icons-material/MusicOff";
-import { speakOppertunity } from "./speakLogic";
+import { playEndLine, playStartLine, speakOppertunity } from "./speakLogic";
 import { padNumber } from "./utils";
 
 function App() {
-  const [hours, setHours] = useState("");
-  const [minutes, setMinutes] = useState("");
-  const [seconds, setSeconds] = useState("");
+  const [timeInput, setTimeInput] = useState({
+    hours: "",
+    minutes: "",
+    seconds: "",
+  });
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  // Save half way point for the timer
+  const [halfWayPoint, setHalfWayPoint] = useState({
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
   const [timerActive, setTimerActive] = useState(false);
   const [audio] = useState(new Audio("/music/Music01.mp3"));
   const [playing, setPlaying] = useState(false);
@@ -68,15 +80,28 @@ function App() {
       interval = setInterval(() => {
         if (seconds > 0) {
           setSeconds(seconds - 1);
+          // If the time equals the half way point, call speakOppertunity
+          if (
+            hours === halfWayPoint.hours &&
+            minutes === halfWayPoint.minutes &&
+            seconds === halfWayPoint.seconds
+          ) {
+            callSpeakOppertunity();
+          }
+          if (hours === 0 && minutes === 0 && seconds === 10) {
+            callSpeakOppertunity();
+          }
         } else if (minutes > 0) {
           setMinutes(minutes - 1);
           setSeconds(59);
-          speakOppertunity({ minutes: minutes });
+          callSpeakOppertunity();
         } else if (hours > 0) {
           setHours(hours - 1);
           setMinutes(59);
           setSeconds(59);
         } else {
+          // If the timer is done, stop the timer
+          playEndLine({ setIsSpeaking: setIsSpeaking });
           setTimerActive(false);
         }
       }, 1000);
@@ -85,6 +110,18 @@ function App() {
     }
     return () => clearInterval(interval);
   }, [timerActive, seconds, minutes, hours]);
+
+  const callSpeakOppertunity = () => {
+    console.log("callSpeakOppertunity at ", hours, minutes, seconds, "");
+    speakOppertunity({
+      hours: hours,
+      minutes: minutes,
+      seconds: seconds,
+      halfWayPoint: halfWayPoint,
+      setIsSpeaking: setIsSpeaking,
+      isSpeaking: isSpeaking,
+    });
+  };
 
   return (
     <AppContainer>
@@ -122,7 +159,6 @@ function App() {
           position="absolute"
           bottom="40px"
           colorScheme="orange"
-          fontStyle="bold"
           size="lg"
           onClick={onOpenSetTimer}
         >
@@ -159,18 +195,24 @@ function App() {
           <ModalBody>
             <HStack spacing={4}>
               <Input
-                value={hours}
-                onChange={(e) => setHours(e.target.value)}
+                value={timeInput.hours}
+                onChange={(e) =>
+                  setTimeInput({ ...timeInput, hours: e.target.value })
+                }
                 placeholder="Hours"
               />
               <Input
-                value={minutes}
-                onChange={(e) => setMinutes(e.target.value)}
+                value={timeInput.minutes}
+                onChange={(e) =>
+                  setTimeInput({ ...timeInput, minutes: e.target.value })
+                }
                 placeholder="Minutes"
               />
               <Input
-                value={seconds}
-                onChange={(e) => setSeconds(e.target.value)}
+                value={timeInput.seconds}
+                onChange={(e) =>
+                  setTimeInput({ ...timeInput, seconds: e.target.value })
+                }
                 placeholder="Seconds"
               />
             </HStack>
@@ -180,7 +222,29 @@ function App() {
             <Button
               colorScheme="orange"
               onClick={() => {
+                const hours = timeInput.hours
+                  ? parseInt(timeInput.hours, 10)
+                  : 0;
+                const minutes = timeInput.minutes
+                  ? parseInt(timeInput.minutes, 10)
+                  : 0;
+                const seconds = timeInput.seconds
+                  ? parseInt(timeInput.seconds, 10)
+                  : 0;
+                setHours(hours);
+                setMinutes(minutes);
+                setSeconds(seconds);
+                const totalTimeInSeconds =
+                  hours * 60 * 60 + minutes * 60 + seconds;
+                const halfTimeInSeconds = Math.floor(totalTimeInSeconds / 2);
+
+                setHalfWayPoint({
+                  hours: Math.floor(halfTimeInSeconds / 60 / 60),
+                  minutes: Math.floor((halfTimeInSeconds / 60) % 60),
+                  seconds: Math.floor(halfTimeInSeconds % 60),
+                });
                 setTimerActive(true);
+                playStartLine({ setIsSpeaking: setIsSpeaking });
                 onCloseSetTimer();
               }}
             >

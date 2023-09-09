@@ -29,6 +29,7 @@ export const speakOppertunity = ({
     playRandomNumberLine({
       minutes: minutes,
       hours: hours,
+      seconds: seconds,
       callback: () => setIsSpeaking(false),
     });
     return;
@@ -36,6 +37,7 @@ export const speakOppertunity = ({
     playSimpleTimeAndRandomLine({
       minutes: minutes,
       hours: hours,
+      seconds: seconds,
       callback: () => setIsSpeaking(false),
     });
     return;
@@ -188,7 +190,7 @@ const playSpesificLineRandom = ({ line, maxNumber, callback }) => {
   });
 };
 
-const playRandomNumberLine = ({ minutes, hours, callback }) => {
+const playRandomNumberLine = ({ minutes, hours, seconds, callback }) => {
   // Random number min 1 max 8
   const randomNum = Math.floor(Math.random() * 7) + 1;
   // Play the intro sound, on callback play the time sound, on callback play the outro sound
@@ -198,13 +200,14 @@ const playRandomNumberLine = ({ minutes, hours, callback }) => {
       playTimeSound({
         minutes: minutes,
         hours: hours,
+        seconds: seconds,
         callback: () =>
           playOutroSound({ number: randomNum, callback: callback }),
       }),
   });
 };
 
-const playSimpleTimeAndRandomLine = ({ minutes, hours, callback }) => {
+const playSimpleTimeAndRandomLine = ({ minutes, hours, seconds, callback }) => {
   const lineNumber = Math.floor(Math.random() * 23) + 1;
 
   let playBefore = true;
@@ -221,6 +224,7 @@ const playSimpleTimeAndRandomLine = ({ minutes, hours, callback }) => {
     playSimpleTime({
       hours: hours,
       minutes: minutes,
+      seconds: seconds,
       callback: () => {
         playSound({
           sound: `Glados_Line_Random_${lineNumber}`,
@@ -235,6 +239,7 @@ const playSimpleTimeAndRandomLine = ({ minutes, hours, callback }) => {
         playSimpleTime({
           hours: hours,
           minutes: minutes,
+          seconds: seconds,
           callback: callback,
         });
       },
@@ -250,7 +255,7 @@ const justPlayRandomLine = ({ callback }) => {
   });
 };
 
-const playSimpleTime = ({ hours, minutes, callback }) => {
+const playSimpleTime = ({ hours, minutes, seconds, callback }) => {
   // Random number min 1 max 3
   const randomIntroNum = Math.floor(Math.random() * 3) + 1;
   const randomOutroNum = Math.floor(Math.random() * 3) + 1;
@@ -264,7 +269,7 @@ const playSimpleTime = ({ hours, minutes, callback }) => {
       playTimeSound({
         hours: hours,
         minutes: minutes,
-        seconds: 0,
+        seconds: seconds,
         callback: () => playSound({ sound: outroSound, callback: callback }),
       }),
   });

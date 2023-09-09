@@ -10,6 +10,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Text,
   VStack,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -41,6 +42,7 @@ import {
   speakOppertunity,
 } from "./speakLogic";
 import { padNumber } from "./utils";
+import { importantMinutes, talkativeScaleDescription } from "./constants";
 
 function App() {
   const [timeInput, setTimeInput] = useState({
@@ -51,6 +53,7 @@ function App() {
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
+  const [talkativeScale, setTalkativeScale] = useState(4); // 0 to 5
   const [isSpeaking, setIsSpeaking] = useState(false);
   // Save half way point for the timer
   const [halfWayPoint, setHalfWayPoint] = useState({
@@ -104,18 +107,28 @@ function App() {
             seconds === halfWayPoint.seconds
           ) {
             callSpeakOppertunity();
-          }
-          if (hours === 0 && minutes === 0 && seconds === 10) {
+          } else if (hours === 0 && minutes === 0 && seconds === 10) {
+            callSpeakOppertunity();
+          } else if (talkativeScale === 5 && seconds % 10 === 0) {
             callSpeakOppertunity();
           }
         } else if (minutes > 0) {
           setMinutes(minutes - 1);
           setSeconds(59);
-          callSpeakOppertunity();
+          if (talkativeScale >= 1 && importantMinutes.includes(minutes)) {
+            callSpeakOppertunity();
+          } else if (talkativeScale >= 4) {
+            callSpeakOppertunity();
+          } else if (talkativeScale == 3 && minutes % 2 === 0) {
+            callSpeakOppertunity();
+          }
         } else if (hours > 0) {
           setHours(hours - 1);
           setMinutes(59);
           setSeconds(59);
+          if (talkativeScale >= 1) {
+            callSpeakOppertunity();
+          }
         } else {
           // If the timer is done, stop the timer
           playEndLine({ setIsSpeaking: setIsSpeaking });
@@ -356,16 +369,40 @@ function App() {
           <ModalHeader>Settings</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <VStack spacing={4}>
-              <Button
-                colorScheme="orange"
-                onClick={() => {
-                  onCloseSettings();
-                  onOpenSetTimer();
-                }}
-              >
-                Set Timer
-              </Button>
+            <Text fontFamily="monospace" fontWeight="bold" marginBottom="3">
+              GLaDOS's Talkativeness
+            </Text>
+            <VStack alignItems="center">
+              <HStack spacing={4}>
+                <Button
+                  colorScheme="orange"
+                  onClick={() => {
+                    if (talkativeScale > 0) {
+                      setTalkativeScale(talkativeScale - 1);
+                    }
+                  }}
+                  isDisabled={talkativeScale === 0}
+                >
+                  -
+                </Button>
+                <Text fontFamily="monospace" fontSize="2xl">
+                  {talkativeScale}
+                </Text>
+                <Button
+                  colorScheme="orange"
+                  onClick={() => {
+                    if (talkativeScale < 5) {
+                      setTalkativeScale(talkativeScale + 1);
+                    }
+                  }}
+                  isDisabled={talkativeScale === 5}
+                >
+                  +
+                </Button>
+              </HStack>
+              <Text fontFamily="monospace">
+                {talkativeScaleDescription[talkativeScale]}
+              </Text>
             </VStack>
           </ModalBody>
 

@@ -19,7 +19,7 @@ const moveUpDownLeftRight = keyframes`
   }
 
   40% {
-    transform: translateY(0) translateX(0); // Moves back to original position
+    transform: translateY(0) translateX(0) scale(1.1); // Moves back to original position and scales up
   }
 
   50% {

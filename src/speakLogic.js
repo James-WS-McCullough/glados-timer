@@ -202,7 +202,7 @@ const playRandomNumberLine = ({ minutes, callback }) => {
 };
 
 const playSimpleTimeAndRandomLine = ({ minutes, callback }) => {
-  const lineNumber = Math.floor(Math.random() * 3) + 1;
+  const lineNumber = Math.floor(Math.random() * 23) + 1;
 
   let playBefore = true;
   if (randomLineTimePosition?.[lineNumber] === "a") {

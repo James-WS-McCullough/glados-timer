@@ -91,7 +91,7 @@ function App() {
   };
 
   // If the timer is active, subtract 1 second from the timer every second
-  React.useEffect(() => {
+  useEffect(() => {
     let interval = null;
     if (timerActive) {
       interval = setInterval(() => {
@@ -141,13 +141,18 @@ function App() {
   };
 
   const handleSetTimer = () => {
-    const hours = timeInput.hours ? parseInt(timeInput.hours, 10) : 0;
-    const minutes = timeInput.minutes ? parseInt(timeInput.minutes, 10) : 0;
-    const seconds = timeInput.seconds ? parseInt(timeInput.seconds, 10) : 0;
+    console.log("timeInput", timeInput);
+    const totalTimeInSeconds =
+      (parseInt(timeInput.hours) | 0) * 60 * 60 +
+      (parseInt(timeInput.minutes) | 0) * 60 +
+      (parseInt(timeInput.seconds) | 0);
+    console.log("totalTimeInSeconds", totalTimeInSeconds);
+    const hours = Math.floor(totalTimeInSeconds / 60 / 60);
+    const minutes = Math.floor((totalTimeInSeconds / 60) % 60);
+    const seconds = Math.floor(totalTimeInSeconds % 60);
     setHours(hours);
     setMinutes(minutes);
     setSeconds(seconds);
-    const totalTimeInSeconds = hours * 60 * 60 + minutes * 60 + seconds;
     const halfTimeInSeconds = Math.floor(totalTimeInSeconds / 2);
 
     setHalfWayPoint({
@@ -155,6 +160,7 @@ function App() {
       minutes: Math.floor((halfTimeInSeconds / 60) % 60),
       seconds: Math.floor(halfTimeInSeconds % 60),
     });
+    console.log("hours, minutes, seconds", hours, minutes, seconds);
     setTimerActive(true);
   };
 
@@ -194,14 +200,16 @@ function App() {
           position="absolute"
           bottom="40px"
           colorScheme="orange"
-          size="lg"
+          width="400px"
+          height="100px"
+          fontSize="3rem"
           fontFamily="monospace"
           onClick={() => {
             onOpenSetTimer();
             playWelcomeLine({ setIsSpeaking: setIsSpeaking, isSpeaking });
           }}
         >
-          BEGIN
+          Start
         </Button>
       )}
       {(seconds > 0 || minutes > 0 || hours > 0) && (
@@ -218,7 +226,7 @@ function App() {
           }}
         >
           {hours ? `${hours}:` : ""}
-          {minutes ? `${minutes}:` : ""}
+          {minutes ? (hours ? `${padNumber(minutes, 2)}:` : `${minutes}:`) : ""}
           {`${padNumber(seconds, 2)}`}
         </div>
       )}
@@ -284,12 +292,13 @@ function App() {
       <Modal isOpen={isOpenSetTimer} onClose={onCloseSetTimer}>
         <ModalOverlay />
         <ModalContent backgroundColor="black" textColor="white">
-          <ModalHeader>Set Timer</ModalHeader>
+          <ModalHeader fontFamily="monospace">Set Timer</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <HStack spacing={4}>
               <Input
                 value={timeInput.hours}
+                fontFamily="monospace"
                 onChange={(e) =>
                   setTimeInput({ ...timeInput, hours: e.target.value })
                 }
@@ -297,6 +306,7 @@ function App() {
               />
               <Input
                 value={timeInput.minutes}
+                fontFamily="monospace"
                 onChange={(e) =>
                   setTimeInput({ ...timeInput, minutes: e.target.value })
                 }
@@ -304,6 +314,7 @@ function App() {
               />
               <Input
                 value={timeInput.seconds}
+                fontFamily="monospace"
                 onChange={(e) =>
                   setTimeInput({ ...timeInput, seconds: e.target.value })
                 }
@@ -314,6 +325,7 @@ function App() {
 
           <ModalFooter>
             <Button
+              fontFamily="monospace"
               colorScheme="orange"
               onClick={() => {
                 handleSetTimer();
@@ -326,7 +338,12 @@ function App() {
             >
               Set Timer
             </Button>
-            <Button variant="ghost" mr={3} onClick={onCloseSetTimer}>
+            <Button
+              colorScheme="white"
+              mr={3}
+              onClick={onCloseSetTimer}
+              fontFamily="monospace"
+            >
               Close
             </Button>
           </ModalFooter>

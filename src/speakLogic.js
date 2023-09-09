@@ -28,12 +28,14 @@ export const speakOppertunity = ({
   if (randomNum <= 4) {
     playRandomNumberLine({
       minutes: minutes,
+      hours: hours,
       callback: () => setIsSpeaking(false),
     });
     return;
   } else {
     playSimpleTimeAndRandomLine({
       minutes: minutes,
+      hours: hours,
       callback: () => setIsSpeaking(false),
     });
     return;
@@ -186,22 +188,23 @@ const playSpesificLineRandom = ({ line, maxNumber, callback }) => {
   });
 };
 
-const playRandomNumberLine = ({ minutes, callback }) => {
+const playRandomNumberLine = ({ minutes, hours, callback }) => {
   // Random number min 1 max 8
   const randomNum = Math.floor(Math.random() * 7) + 1;
   // Play the intro sound, on callback play the time sound, on callback play the outro sound
   playIntroSound({
     number: randomNum,
     callback: () =>
-      playMinutesSound({
-        num: minutes,
+      playTimeSound({
+        minutes: minutes,
+        hours: hours,
         callback: () =>
           playOutroSound({ number: randomNum, callback: callback }),
       }),
   });
 };
 
-const playSimpleTimeAndRandomLine = ({ minutes, callback }) => {
+const playSimpleTimeAndRandomLine = ({ minutes, hours, callback }) => {
   const lineNumber = Math.floor(Math.random() * 23) + 1;
 
   let playBefore = true;
@@ -216,6 +219,7 @@ const playSimpleTimeAndRandomLine = ({ minutes, callback }) => {
 
   if (playBefore) {
     playSimpleTime({
+      hours: hours,
       minutes: minutes,
       callback: () => {
         playSound({
@@ -229,6 +233,7 @@ const playSimpleTimeAndRandomLine = ({ minutes, callback }) => {
       sound: `Glados_Line_Random_${lineNumber}`,
       callback: () => {
         playSimpleTime({
+          hours: hours,
           minutes: minutes,
           callback: callback,
         });
@@ -245,7 +250,7 @@ const justPlayRandomLine = ({ callback }) => {
   });
 };
 
-const playSimpleTime = ({ minutes, callback }) => {
+const playSimpleTime = ({ hours, minutes, callback }) => {
   // Random number min 1 max 3
   const randomIntroNum = Math.floor(Math.random() * 3) + 1;
   const randomOutroNum = Math.floor(Math.random() * 3) + 1;
@@ -256,28 +261,29 @@ const playSimpleTime = ({ minutes, callback }) => {
   playSound({
     sound: introSound,
     callback: () =>
-      playMinutesSound({
-        num: minutes,
+      playTimeSound({
+        hours: hours,
+        minutes: minutes,
+        seconds: 0,
         callback: () => playSound({ sound: outroSound, callback: callback }),
       }),
   });
 };
 
-const playMinutesSound = ({ num, callback }) => {
-  // Plays the number of minutes, then the minutes unit sound, then the callback
-  // If 1 minute, play 60 seconds instead.
-  if (num === 1) {
-    playTimeUnitSound(60, "Seconds", callback);
-  } else {
-    playTimeUnitSound(num, "Minutes", callback);
-  }
-};
-
-const playTimeUnitSound = (num, unit, callback) => {
+const playTimeUnitSound = ({ num, unit, isContinuing = false, callback }) => {
   // Plays the number of minutes, then the minutes unit sound, then the callback
   playNumberSound(num, () => {
     const unitAudio = new Audio(`SFX/Glados_Number_${unit}.mp3`);
-    unitAudio.onended = callback; // Call the callback after the unit sound has ended
+    if (isContinuing) {
+      unitAudio.onended = () => {
+        playSound({
+          sound: "Glados_Number_And",
+          callback: callback,
+        });
+      };
+    } else {
+      unitAudio.onended = callback; // Call the callback after the unit sound has ended
+    }
     unitAudio.play();
   });
 };
@@ -356,32 +362,79 @@ const playSound = ({ sound, callback }) => {
 };
 
 const playTimeSound = ({ hours, minutes, seconds, callback }) => {
+  // Plays the number of hours, then minutes, then seconds, then the callback. Play the 'and' sound between each time unit
+
   if (hours) {
-    playTimeUnitSound(parseInt(hours, 10), "Hours", () => {
-      if (minutes) {
-        playTimeUnitSound(parseInt(minutes, 10), "Minutes", () => {
-          if (seconds) {
-            playTimeUnitSound(parseInt(seconds, 10), "Seconds", callback);
-          } else {
-            callback();
+    let hoursString = "Hours";
+    if (hours === 1) {
+      hoursString = "Hour";
+    }
+
+    playTimeUnitSound({
+      num: parseInt(hours, 10),
+      unit: hoursString,
+      isContinuing: (minutes || seconds) && true,
+      callback: () => {
+        if (minutes) {
+          let minutesString = "Minutes";
+          if (minutes === 1) {
+            minutesString = "Minute";
           }
-        });
-      } else if (seconds) {
-        playTimeUnitSound(parseInt(seconds, 10), "Seconds", playOutroSound);
-      } else {
-        callback();
-      }
+          playTimeUnitSound({
+            num: parseInt(minutes, 10),
+            unit: minutesString,
+            isContinuing: seconds && true,
+            callback: () => {
+              if (seconds) {
+                playTimeUnitSound({
+                  num: parseInt(seconds, 10),
+                  unit: "Seconds",
+                  callback: callback,
+                });
+              } else {
+                callback();
+              }
+            },
+          });
+        } else if (seconds) {
+          playTimeUnitSound({
+            num: parseInt(seconds, 10),
+            unit: "Seconds",
+            callback: callback,
+            isContinuing: false,
+          });
+        } else {
+          callback();
+        }
+      },
     });
   } else if (minutes) {
-    playTimeUnitSound(parseInt(minutes, 10), "Minutes", () => {
-      if (seconds) {
-        playTimeUnitSound(parseInt(seconds, 10), "Seconds", playOutroSound);
-      } else {
-        callback();
-      }
+    let minutesString = "Minutes";
+    if (minutes === 1) {
+      minutesString = "Minute";
+    }
+    playTimeUnitSound({
+      num: parseInt(minutes, 10),
+      unit: minutesString,
+      isContinuing: seconds && true,
+      callback: () => {
+        if (seconds) {
+          playTimeUnitSound({
+            num: parseInt(seconds, 10),
+            unit: "Seconds",
+            callback: callback,
+          });
+        } else {
+          callback();
+        }
+      },
     });
   } else if (seconds) {
-    playTimeUnitSound(parseInt(seconds, 10), "Seconds", playOutroSound);
+    playTimeUnitSound({
+      num: parseInt(seconds, 10),
+      unit: "Seconds",
+      callback: callback,
+    });
   } else {
     callback(); // If no time units are specified, directly play the outro
   }

@@ -195,6 +195,7 @@ function App() {
           bottom="40px"
           colorScheme="orange"
           size="lg"
+          fontFamily="monospace"
           onClick={() => {
             onOpenSetTimer();
             playWelcomeLine({ setIsSpeaking: setIsSpeaking, isSpeaking });
@@ -212,6 +213,7 @@ function App() {
             transform: "translateX(-50%)",
             fontSize: "5rem",
             fontWeight: "bold",
+            fontFamily: "monospace",
             color: "white",
           }}
         >

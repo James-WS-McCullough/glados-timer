@@ -89,7 +89,7 @@ const checkSpesificCases = ({
 
   if (hours === 0 && minutes === 5 && seconds === 0) {
     playSpesificLineRandom({
-      line: "Glados_Line_2MinuteLeft",
+      line: "Glados_Line_5MinutesLeft",
       maxNumber: 3,
       callback: () => setIsSpeaking(false),
     });
@@ -98,7 +98,7 @@ const checkSpesificCases = ({
 
   if (hours === 0 && minutes === 2 && seconds === 0) {
     playSpesificLineRandom({
-      line: "Glados_Line_2MinuteLeft",
+      line: "Glados_Line_2MinutesLeft",
       maxNumber: 3,
       callback: () => setIsSpeaking(false),
     });

@@ -27,12 +27,12 @@ export const randomLineTimePosition = {
 };
 
 export const talkativeScaleDescription = {
-  0: "GLaDOS isn't talking to you today.",
-  1: "GLaDOS talks rarely.",
-  2: "GLaDOS talks a bit.",
-  3: "GLaDOS talks a normal ammount.", // Default
-  4: "GLaDOS talks quite a lot.",
-  5: "GLaDOS never stops talking.",
+  0: "GLaDOS isn't talking to you today. (Never)",
+  1: "GLaDOS talks rarely. (Only spesific times)",
+  2: "GLaDOS talks every so often. (Every 5 Minutes)",
+  3: "GLaDOS talks a normal ammount. (Every 2 Minutes)", // Default
+  4: "GLaDOS talks quite regularly. (Every Minute)",
+  5: "GLaDOS never stops talking. (Every 10 Seconds)",
 };
 
 export const importantMinutes = [1, 2, 5, 10, 15, 20, 30, 45];

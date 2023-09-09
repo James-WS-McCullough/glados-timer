@@ -32,6 +32,8 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import PauseIcon from "@mui/icons-material/Pause";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import StopIcon from "@mui/icons-material/Stop";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import {
   playEndLine,
   playPauseLine,
@@ -115,11 +117,17 @@ function App() {
         } else if (minutes > 0) {
           setMinutes(minutes - 1);
           setSeconds(59);
-          if (talkativeScale >= 1 && importantMinutes.includes(minutes)) {
+
+          if (talkativeScale >= 4) {
             callSpeakOppertunity();
-          } else if (talkativeScale >= 4) {
+          } else if (talkativeScale >= 3 && minutes % 2 === 0) {
             callSpeakOppertunity();
-          } else if (talkativeScale == 3 && minutes % 2 === 0) {
+          } else if (talkativeScale >= 2 && minutes % 5 === 0) {
+            callSpeakOppertunity();
+          } else if (
+            talkativeScale >= 1 &&
+            importantMinutes.includes(minutes)
+          ) {
             callSpeakOppertunity();
           }
         } else if (hours > 0) {
@@ -215,7 +223,7 @@ function App() {
           colorScheme="orange"
           width="400px"
           height="100px"
-          fontSize="3rem"
+          fontSize="4rem"
           fontFamily="monospace"
           onClick={() => {
             onOpenSetTimer();
@@ -273,7 +281,18 @@ function App() {
             <PauseIcon />
           </Button>
         )}
-        {timerActive && (
+        {!timerActive && (seconds > 0 || minutes > 0 || hours > 0) && (
+          <Button
+            colorScheme="orange"
+            onClick={() => {
+              setTimerActive(true);
+              //playStartLine({ setIsSpeaking: setIsSpeaking });
+            }}
+          >
+            <PlayArrowIcon />
+          </Button>
+        )}
+        {(seconds > 0 || minutes > 0 || hours > 0) && (
           <Button
             colorScheme="orange"
             onClick={() => {
@@ -288,17 +307,6 @@ function App() {
             }}
           >
             <StopIcon />
-          </Button>
-        )}
-        {!timerActive && (seconds > 0 || minutes > 0 || hours > 0) && (
-          <Button
-            colorScheme="orange"
-            onClick={() => {
-              setTimerActive(true);
-              //playStartLine({ setIsSpeaking: setIsSpeaking });
-            }}
-          >
-            <PlayArrowIcon />
           </Button>
         )}
       </HStack>
@@ -352,7 +360,7 @@ function App() {
               Set Timer
             </Button>
             <Button
-              colorScheme="white"
+              colorScheme="blue"
               mr={3}
               onClick={onCloseSetTimer}
               fontFamily="monospace"
@@ -373,7 +381,7 @@ function App() {
               GLaDOS's Talkativeness
             </Text>
             <VStack alignItems="center">
-              <HStack spacing={4}>
+              <HStack spacing={2}>
                 <Button
                   colorScheme="orange"
                   onClick={() => {
@@ -383,11 +391,8 @@ function App() {
                   }}
                   isDisabled={talkativeScale === 0}
                 >
-                  -
+                  <ArrowDownwardIcon />
                 </Button>
-                <Text fontFamily="monospace" fontSize="2xl">
-                  {talkativeScale}
-                </Text>
                 <Button
                   colorScheme="orange"
                   onClick={() => {
@@ -397,17 +402,17 @@ function App() {
                   }}
                   isDisabled={talkativeScale === 5}
                 >
-                  +
+                  <ArrowUpwardIcon />
                 </Button>
+                <Text fontFamily="monospace">
+                  {talkativeScaleDescription[talkativeScale]}
+                </Text>
               </HStack>
-              <Text fontFamily="monospace">
-                {talkativeScaleDescription[talkativeScale]}
-              </Text>
             </VStack>
           </ModalBody>
 
           <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onCloseSettings}>
+            <Button colorScheme="blue" mr={3} onClick={onCloseSettings}>
               Close
             </Button>
           </ModalFooter>

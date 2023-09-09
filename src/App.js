@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
+  HStack,
   Input,
   Modal,
   ModalBody,
@@ -24,17 +25,41 @@ import {
   InnerFaceLayersContainer,
   OuterFaceLayersContainer,
 } from "./animationAndImageFormatting";
+import MusicNoteIcon from "@mui/icons-material/MusicNote";
+import MusicOffIcon from "@mui/icons-material/MusicOff";
+import { speakOppertunity } from "./speakLogic";
+import { padNumber } from "./utils";
 
 function App() {
   const [hours, setHours] = useState("");
   const [minutes, setMinutes] = useState("");
   const [seconds, setSeconds] = useState("");
   const [timerActive, setTimerActive] = useState(false);
+  const [audio] = useState(new Audio("/music/Music01.mp3"));
+  const [playing, setPlaying] = useState(false);
   const {
     isOpen: isOpenSetTimer,
     onOpen: onOpenSetTimer,
     onClose: onCloseSetTimer,
   } = useDisclosure();
+
+  useEffect(() => {
+    audio.loop = true;
+    return () => {
+      audio.pause();
+    };
+  }, [audio]);
+
+  const togglePlayPause = () => {
+    if (playing) {
+      audio.pause();
+    } else {
+      // Play at 0.5 volume
+      audio.volume = 0.3;
+      audio.play();
+    }
+    setPlaying(!playing);
+  };
 
   // If the timer is active, subtract 1 second from the timer every second
   React.useEffect(() => {
@@ -46,7 +71,7 @@ function App() {
         } else if (minutes > 0) {
           setMinutes(minutes - 1);
           setSeconds(59);
-          playTimeSound({ minutes: minutes });
+          speakOppertunity({ minutes: minutes });
         } else if (hours > 0) {
           setHours(hours - 1);
           setMinutes(59);
@@ -60,92 +85,6 @@ function App() {
     }
     return () => clearInterval(interval);
   }, [timerActive, seconds, minutes, hours]);
-
-  const padNumber = (num, digits = 3) => {
-    return String(num).padStart(digits, "0");
-  };
-
-  const playTimeUnitSound = (num, unit, callback) => {
-    let audio;
-    if (num >= 1 && num <= 19) {
-      audio = new Audio(`SFX/Glados_Number_${padNumber(num)}.mp3`);
-    } else {
-      let tens = Math.floor(num / 10) * 10;
-      let ones = num % 10;
-
-      if (tens !== 0 && ones !== 0) {
-        audio = new Audio(`SFX/Glados_Number_${padNumber(tens)}.mp3`);
-        audio.onended = () => {
-          const onesAudio = new Audio(
-            `SFX/Glados_Number_${padNumber(ones)}.mp3`
-          );
-          onesAudio.onended = callback; // Call the callback after ones sound has ended
-          onesAudio.play();
-        };
-      } else if (tens !== 0) {
-        audio = new Audio(`SFX/Glados_Number_${padNumber(tens)}.mp3`);
-        audio.onended = callback;
-      } else if (ones !== 0) {
-        audio = new Audio(`SFX/Glados_Number_${padNumber(ones)}.mp3`);
-        audio.onended = callback;
-      }
-    }
-    audio.onended = () => {
-      const unitAudio = new Audio(`SFX/Glados_Number_${unit}.mp3`);
-      unitAudio.onended = callback; // Call the callback after the unit sound has ended
-      unitAudio.play();
-    };
-    audio.play();
-  };
-
-  const playIntroSound = (callback) => {
-    const introAudio = new Audio(`SFX/Glados_NumberLine_Start_1.mp3`);
-    introAudio.onended = callback;
-    introAudio.play();
-  };
-
-  const playOutroSound = () => {
-    const outroAudio = new Audio(`SFX/Glados_NumberLine_End_1.mp3`);
-    outroAudio.play();
-  };
-
-  const playTimeSound = ({ hours, minutes, seconds }) => {
-    playIntroSound(() => {
-      if (hours) {
-        playTimeUnitSound(parseInt(hours, 10), "Hours", () => {
-          if (minutes) {
-            playTimeUnitSound(parseInt(minutes, 10), "Minutes", () => {
-              if (seconds) {
-                playTimeUnitSound(
-                  parseInt(seconds, 10),
-                  "Seconds",
-                  playOutroSound
-                );
-              } else {
-                playOutroSound();
-              }
-            });
-          } else if (seconds) {
-            playTimeUnitSound(parseInt(seconds, 10), "Seconds", playOutroSound);
-          } else {
-            playOutroSound();
-          }
-        });
-      } else if (minutes) {
-        playTimeUnitSound(parseInt(minutes, 10), "Minutes", () => {
-          if (seconds) {
-            playTimeUnitSound(parseInt(seconds, 10), "Seconds", playOutroSound);
-          } else {
-            playOutroSound();
-          }
-        });
-      } else if (seconds) {
-        playTimeUnitSound(parseInt(seconds, 10), "Seconds", playOutroSound);
-      } else {
-        playOutroSound(); // If no time units are specified, directly play the outro
-      }
-    });
-  };
 
   return (
     <AppContainer>
@@ -204,33 +143,37 @@ function App() {
         >
           {hours ? `${hours}:` : ""}
           {minutes ? `${minutes}:` : ""}
-          {seconds ? `${padNumber(seconds, 2)}` : ""}
+          {`${padNumber(seconds, 2)}`}
         </div>
       )}
-      // A modal to set the timer
+      <HStack position="absolute" bottom="40px" left="40px">
+        <Button colorScheme="orange" onClick={togglePlayPause}>
+          {playing ? <MusicNoteIcon /> : <MusicOffIcon />}
+        </Button>
+      </HStack>
       <Modal isOpen={isOpenSetTimer} onClose={onCloseSetTimer}>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent backgroundColor="black" textColor="white">
           <ModalHeader>Set Timer</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <VStack spacing={4}>
+            <HStack spacing={4}>
               <Input
                 value={hours}
                 onChange={(e) => setHours(e.target.value)}
-                placeholder="Enter hours (0-99)"
+                placeholder="Hours"
               />
               <Input
                 value={minutes}
                 onChange={(e) => setMinutes(e.target.value)}
-                placeholder="Enter minutes (0-59)"
+                placeholder="Minutes"
               />
               <Input
                 value={seconds}
                 onChange={(e) => setSeconds(e.target.value)}
-                placeholder="Enter seconds (0-59)"
+                placeholder="Seconds"
               />
-            </VStack>
+            </HStack>
           </ModalBody>
 
           <ModalFooter>

@@ -150,6 +150,14 @@ function App() {
     return () => clearInterval(interval);
   }, [timerActive, seconds, minutes, hours]);
 
+  useEffect(() => {
+    const talkativeScaleFromLocalStorage =
+      localStorage.getItem("talkativeScale");
+    if (talkativeScaleFromLocalStorage) {
+      setTalkativeScale(parseInt(talkativeScaleFromLocalStorage));
+    }
+  }, []);
+
   const callSpeakOppertunity = () => {
     console.log("callSpeakOppertunity at ", hours, minutes, seconds, "");
     speakOppertunity({
@@ -406,6 +414,10 @@ function App() {
                   onClick={() => {
                     if (talkativeScale > 0) {
                       setTalkativeScale(talkativeScale - 1);
+                      localStorage.setItem(
+                        "talkativeScale",
+                        talkativeScale - 1
+                      );
                     }
                   }}
                   isDisabled={talkativeScale === 0}
@@ -417,6 +429,10 @@ function App() {
                   onClick={() => {
                     if (talkativeScale < 5) {
                       setTalkativeScale(talkativeScale + 1);
+                      localStorage.setItem(
+                        "talkativeScale",
+                        talkativeScale + 1
+                      );
                     }
                   }}
                   isDisabled={talkativeScale === 5}

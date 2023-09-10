@@ -28,7 +28,7 @@ export const speakOppertunity = ({
   // Random number 1 to 10
   const randomNum = Math.floor(Math.random() * 10) + 1;
 
-  if (randomNum <= 3) {
+  if (randomNum <= 4) {
     playRandomNumberLine({
       minutes: minutes,
       hours: hours,

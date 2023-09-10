@@ -45,6 +45,7 @@ import {
 } from "./speakLogic";
 import { padNumber } from "./utils";
 import { importantMinutes, talkativeScaleDescription } from "./constants";
+import SmsIcon from "@mui/icons-material/Sms";
 
 function App() {
   const [timeInput, setTimeInput] = useState({
@@ -307,6 +308,24 @@ function App() {
             }}
           >
             <StopIcon />
+          </Button>
+        )}
+        {(seconds > 0 || minutes > 0 || hours > 0) && (
+          <Button
+            colorScheme="blue"
+            onClick={() => {
+              speakOppertunity({
+                hours: hours,
+                minutes: minutes,
+                seconds: seconds,
+                halfWayPoint: halfWayPoint,
+                setIsSpeaking: setIsSpeaking,
+                isSpeaking: isSpeaking,
+              });
+            }}
+            isDisabled={isSpeaking}
+          >
+            <SmsIcon />
           </Button>
         )}
       </HStack>

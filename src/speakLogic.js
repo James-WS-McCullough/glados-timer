@@ -133,7 +133,7 @@ export const playStartLine = ({ setIsSpeaking, isSpeaking }) => {
   setIsSpeaking(true);
   playSpesificLineRandom({
     line: "Glados_Line_TimerStart",
-    maxNumber: 3,
+    maxNumber: 13,
     callback: () => setIsSpeaking(false),
   });
 };

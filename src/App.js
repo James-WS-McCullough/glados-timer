@@ -42,6 +42,7 @@ import {
   playResetLine,
   playRestSessionStartLine,
   playRestSkipLine,
+  playResumeLine,
   playSettingsLine,
   playStartLine,
   playWelcomeLine,
@@ -364,8 +365,8 @@ function App() {
           <Button
             colorScheme="orange"
             onClick={() => {
+              playResumeLine({ setIsSpeaking: setIsSpeaking });
               setTimerActive(true);
-              //playStartLine({ setIsSpeaking: setIsSpeaking });
             }}
           >
             <PlayArrowIcon />

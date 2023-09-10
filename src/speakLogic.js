@@ -187,6 +187,16 @@ export const playPauseLine = ({ setIsSpeaking, isSpeaking }) => {
   });
 };
 
+export const playResumeLine = ({ setIsSpeaking, isSpeaking }) => {
+  if (isSpeaking) return;
+  setIsSpeaking(true);
+  playSpesificLineRandom({
+    line: "Glados_Line_Resume",
+    maxNumber: 10,
+    callback: () => setIsSpeaking(false),
+  });
+};
+
 export const playWelcomeLine = ({ setIsSpeaking, isSpeaking }) => {
   if (isSpeaking) return;
   setIsSpeaking(true);

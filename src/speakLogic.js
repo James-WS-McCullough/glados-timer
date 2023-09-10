@@ -11,6 +11,8 @@ export const speakOppertunity = ({
   halfWayPoint,
   isSpeaking,
   setIsSpeaking,
+  isPomodoro,
+  pomodoroIsWork,
 }) => {
   // If the time equals the half way point, play the half way point sound
   if (isSpeaking) return;
@@ -24,6 +26,18 @@ export const speakOppertunity = ({
     setIsSpeaking: setIsSpeaking,
   });
   if (isSpesificCase) return;
+
+  if (isPomodoro && !pomodoroIsWork) {
+    const randomNum = Math.floor(Math.random() * 10) + 1;
+    if (randomNum <= 4) {
+      playSpesificLineRandom({
+        line: "Glados_PomoLine_InRest",
+        maxNumber: 3,
+        callback: () => setIsSpeaking(false),
+      });
+      return;
+    }
+  }
 
   // Random number 1 to 10
   const randomNum = Math.floor(Math.random() * 10) + 1;
@@ -124,6 +138,36 @@ export const playStartLine = ({ setIsSpeaking, isSpeaking }) => {
   });
 };
 
+export const playWorkSessionStartLine = ({ setIsSpeaking, isSpeaking }) => {
+  if (isSpeaking) return;
+  setIsSpeaking(true);
+  playSpesificLineRandom({
+    line: "Glados_PomoLine_WorkStart",
+    maxNumber: 8,
+    callback: () => setIsSpeaking(false),
+  });
+};
+
+export const playRestSessionStartLine = ({ setIsSpeaking, isSpeaking }) => {
+  if (isSpeaking) return;
+  setIsSpeaking(true);
+  playSpesificLineRandom({
+    line: "Glados_PomoLine_RestStart",
+    maxNumber: 5,
+    callback: () => setIsSpeaking(false),
+  });
+};
+
+export const playRestSkipLine = ({ setIsSpeaking, isSpeaking }) => {
+  if (isSpeaking) return;
+  setIsSpeaking(true);
+  playSpesificLineRandom({
+    line: "Glados_PomoLine_SkipRest",
+    maxNumber: 3,
+    callback: () => setIsSpeaking(false),
+  });
+};
+
 export const playEndLine = ({ setIsSpeaking }) => {
   setIsSpeaking(true);
   playSpesificLineRandom({
@@ -138,7 +182,7 @@ export const playPauseLine = ({ setIsSpeaking, isSpeaking }) => {
   setIsSpeaking(true);
   playSpesificLineRandom({
     line: "Glados_Line_Pause",
-    maxNumber: 5,
+    maxNumber: 8,
     callback: () => setIsSpeaking(false),
   });
 };

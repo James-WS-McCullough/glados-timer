@@ -10,6 +10,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Switch,
   Text,
   VStack,
   useDisclosure,
@@ -34,13 +35,17 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import StopIcon from "@mui/icons-material/Stop";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import SkipNextIcon from "@mui/icons-material/SkipNext";
 import {
   playEndLine,
   playPauseLine,
   playResetLine,
+  playRestSessionStartLine,
+  playRestSkipLine,
   playSettingsLine,
   playStartLine,
   playWelcomeLine,
+  playWorkSessionStartLine,
   speakOppertunity,
 } from "./speakLogic";
 import { padNumber } from "./utils";
@@ -58,6 +63,10 @@ function App() {
   const [seconds, setSeconds] = useState(0);
   const [talkativeScale, setTalkativeScale] = useState(4); // 0 to 5
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isPomodoro, setIsPomodoro] = useState(false);
+  const [pomodoroWorkMinutes, setPomodoroWorkMinutes] = useState("25");
+  const [pomodoroBreakMinutes, setPomodoroBreakMinutes] = useState("5");
+  const [pomodoroIsWork, setPomodoroIsWork] = useState(true);
   // Save half way point for the timer
   const [halfWayPoint, setHalfWayPoint] = useState({
     hours: 0,
@@ -140,8 +149,7 @@ function App() {
           }
         } else {
           // If the timer is done, stop the timer
-          playEndLine({ setIsSpeaking: setIsSpeaking });
-          setTimerActive(false);
+          handleEndTimer();
         }
       }, 1000);
     } else if (!timerActive && seconds !== 0) {
@@ -156,6 +164,18 @@ function App() {
     if (talkativeScaleFromLocalStorage) {
       setTalkativeScale(parseInt(talkativeScaleFromLocalStorage));
     }
+    const pomodoroWorkMinutesFromLocalStorage = localStorage.getItem(
+      "pomodoroWorkMinutes"
+    );
+    if (pomodoroWorkMinutesFromLocalStorage) {
+      setPomodoroWorkMinutes(pomodoroWorkMinutesFromLocalStorage);
+    }
+    const pomodoroBreakMinutesFromLocalStorage = localStorage.getItem(
+      "pomodoroBreakMinutes"
+    );
+    if (pomodoroBreakMinutesFromLocalStorage) {
+      setPomodoroBreakMinutes(pomodoroBreakMinutesFromLocalStorage);
+    }
   }, []);
 
   const callSpeakOppertunity = () => {
@@ -167,10 +187,60 @@ function App() {
       halfWayPoint: halfWayPoint,
       setIsSpeaking: setIsSpeaking,
       isSpeaking: isSpeaking,
+      isPomodoro: isPomodoro,
+      pomodoroIsWork: pomodoroIsWork,
     });
   };
 
+  const handleEndTimer = () => {
+    if (isPomodoro) {
+      if (pomodoroIsWork) {
+        playRestSessionStartLine({ setIsSpeaking: setIsSpeaking });
+        setPomodoroIsWork(false);
+        setTimerPomodoro({ isWork: false });
+      } else {
+        playWorkSessionStartLine({ setIsSpeaking: setIsSpeaking });
+        setPomodoroIsWork(true);
+        setTimerPomodoro({ isWork: true });
+      }
+    } else {
+      playEndLine({ setIsSpeaking: setIsSpeaking });
+      setTimerActive(false);
+    }
+  };
+
   const handleSetTimer = () => {
+    if (isPomodoro) {
+      setTimerPomodoro({ isWork: pomodoroIsWork });
+    } else {
+      setTimerClassic();
+    }
+    setTimerActive(true);
+  };
+
+  const setTimerPomodoro = ({ isWork }) => {
+    if (isWork) {
+      setHours(0);
+      setMinutes(parseInt(pomodoroWorkMinutes));
+      setSeconds(0);
+      setHalfWayPoint({
+        hours: 0,
+        minutes: parseInt(pomodoroWorkMinutes) / 2,
+        seconds: 0,
+      });
+    } else {
+      setHours(0);
+      setMinutes(parseInt(pomodoroBreakMinutes));
+      setSeconds(0);
+      setHalfWayPoint({
+        hours: 0,
+        minutes: parseInt(pomodoroBreakMinutes) / 2,
+        seconds: 0,
+      });
+    }
+  };
+
+  const setTimerClassic = () => {
     console.log("timeInput", timeInput);
     const totalTimeInSeconds =
       (parseInt(timeInput.hours) | 0) * 60 * 60 +
@@ -191,7 +261,6 @@ function App() {
       seconds: Math.floor(halfTimeInSeconds % 60),
     });
     console.log("hours, minutes, seconds", hours, minutes, seconds);
-    setTimerActive(true);
   };
 
   return (
@@ -225,7 +294,7 @@ function App() {
           alt="Face Outer Cover"
         />
       </FaceLayersContainer>
-      {!(seconds > 0 || minutes > 0 || hours > 0) && (
+      {!(seconds > 0 || minutes > 0 || hours > 0) && !timerActive && (
         <Button
           position="absolute"
           bottom="40px"
@@ -242,7 +311,7 @@ function App() {
           Start
         </Button>
       )}
-      {(seconds > 0 || minutes > 0 || hours > 0) && (
+      {(seconds > 0 || minutes > 0 || hours > 0 || timerActive) && (
         <div
           style={{
             position: "absolute",
@@ -252,7 +321,8 @@ function App() {
             fontSize: "5rem",
             fontWeight: "bold",
             fontFamily: "monospace",
-            color: "white",
+            // If is pomodoro, and pomodoro work is false, color is blue
+            color: isPomodoro && !pomodoroIsWork ? "blue" : "white",
           }}
         >
           {hours ? `${hours}:` : ""}
@@ -318,6 +388,21 @@ function App() {
             <StopIcon />
           </Button>
         )}
+        {isPomodoro && !pomodoroIsWork && (
+          <Button
+            colorScheme="green"
+            onClick={() => {
+              setPomodoroIsWork(true);
+              setTimerPomodoro({ isWork: true });
+              playRestSkipLine({
+                setIsSpeaking: setIsSpeaking,
+                isSpeaking: isSpeaking,
+              });
+            }}
+          >
+            <SkipNextIcon />
+          </Button>
+        )}
         {(seconds > 0 || minutes > 0 || hours > 0) && (
           <Button
             colorScheme="blue"
@@ -329,6 +414,8 @@ function App() {
                 halfWayPoint: halfWayPoint,
                 setIsSpeaking: setIsSpeaking,
                 isSpeaking: isSpeaking,
+                isPomodoro: isPomodoro,
+                pomodoroIsWork: pomodoroIsWork,
               });
             }}
             isDisabled={isSpeaking}
@@ -343,32 +430,70 @@ function App() {
           <ModalHeader fontFamily="monospace">Set Timer</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <HStack spacing={4}>
-              <Input
-                value={timeInput.hours}
-                fontFamily="monospace"
-                onChange={(e) =>
-                  setTimeInput({ ...timeInput, hours: e.target.value })
-                }
-                placeholder="Hours"
+            <HStack spacing={4} marginBottom="3">
+              <Switch
+                colorScheme="orange"
+                isChecked={isPomodoro}
+                onChange={() => setIsPomodoro(!isPomodoro)}
               />
-              <Input
-                value={timeInput.minutes}
-                fontFamily="monospace"
-                onChange={(e) =>
-                  setTimeInput({ ...timeInput, minutes: e.target.value })
-                }
-                placeholder="Minutes"
-              />
-              <Input
-                value={timeInput.seconds}
-                fontFamily="monospace"
-                onChange={(e) =>
-                  setTimeInput({ ...timeInput, seconds: e.target.value })
-                }
-                placeholder="Seconds"
-              />
+              <Text fontFamily="monospace">Pomodoro</Text>
             </HStack>
+            {!isPomodoro && (
+              <HStack spacing={4}>
+                <Input
+                  value={timeInput.hours}
+                  fontFamily="monospace"
+                  onChange={(e) =>
+                    setTimeInput({ ...timeInput, hours: e.target.value })
+                  }
+                  placeholder="Hours"
+                />
+                <Input
+                  value={timeInput.minutes}
+                  fontFamily="monospace"
+                  onChange={(e) =>
+                    setTimeInput({ ...timeInput, minutes: e.target.value })
+                  }
+                  placeholder="Minutes"
+                />
+                <Input
+                  value={timeInput.seconds}
+                  fontFamily="monospace"
+                  onChange={(e) =>
+                    setTimeInput({ ...timeInput, seconds: e.target.value })
+                  }
+                  placeholder="Seconds"
+                />
+              </HStack>
+            )}
+            {isPomodoro && (
+              <VStack spacing={0} width="100%">
+                <Text fontFamily="monospace">Work Minutes</Text>
+                <Input
+                  value={pomodoroWorkMinutes}
+                  fontFamily="monospace"
+                  marginBottom="3"
+                  onChange={(e) => {
+                    setPomodoroWorkMinutes(e.target.value);
+                    localStorage.setItem("pomodoroWorkMinutes", e.target.value);
+                  }}
+                  placeholder="Work Minutes"
+                />
+                <Text fontFamily="monospace">Break Minutes</Text>
+                <Input
+                  value={pomodoroBreakMinutes}
+                  fontFamily="monospace"
+                  onChange={(e) => {
+                    setPomodoroBreakMinutes(e.target.value);
+                    localStorage.setItem(
+                      "pomodoroBreakMinutes",
+                      e.target.value
+                    );
+                  }}
+                  placeholder="Break Minutes"
+                />
+              </VStack>
+            )}
           </ModalBody>
 
           <ModalFooter>

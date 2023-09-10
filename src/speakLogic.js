@@ -172,7 +172,7 @@ export const playEndLine = ({ setIsSpeaking }) => {
   setIsSpeaking(true);
   playSpesificLineRandom({
     line: "Glados_Line_TimeUp",
-    maxNumber: 3,
+    maxNumber: 11,
     callback: () => setIsSpeaking(false),
   });
 };

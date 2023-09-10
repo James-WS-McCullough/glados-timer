@@ -75,8 +75,6 @@ function App() {
     seconds: 0,
   });
   const [timerActive, setTimerActive] = useState(false);
-  const [audio] = useState(new Audio("/music/Music01.mp3"));
-  const [playing, setPlaying] = useState(false);
   const {
     isOpen: isOpenSetTimer,
     onOpen: onOpenSetTimer,
@@ -87,24 +85,6 @@ function App() {
     onOpen: onOpenSettings,
     onClose: onCloseSettings,
   } = useDisclosure();
-
-  useEffect(() => {
-    audio.loop = true;
-    return () => {
-      audio.pause();
-    };
-  }, [audio]);
-
-  const togglePlayPause = () => {
-    if (playing) {
-      audio.pause();
-    } else {
-      // Play at 0.5 volume
-      audio.volume = 0.3;
-      audio.play();
-    }
-    setPlaying(!playing);
-  };
 
   // If the timer is active, subtract 1 second from the timer every second
   useEffect(() => {
@@ -332,9 +312,6 @@ function App() {
         </div>
       )}
       <HStack position="absolute" bottom="30px" left="30px">
-        <Button colorScheme="orange" onClick={togglePlayPause}>
-          {playing ? <MusicNoteIcon /> : <MusicOffIcon />}
-        </Button>
         <Button
           colorScheme="orange"
           onClick={() => {

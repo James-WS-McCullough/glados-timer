@@ -67,6 +67,43 @@ const innerFaceMove = keyframes`
 }
 `;
 
+// Make smoother by interpolating the values on the curve
+const pipeObjectMove = keyframes`
+0% {
+  transform: translate(-400px, 0px) rotate(0deg);
+}
+5% {
+  transform: translate(-390px, -40px) rotate(7.2deg);
+}
+13% {
+  transform: translate(-380px, -100px) rotate(14.4deg);
+}
+25% {
+  transform: translate(-380px, -200px) rotate(22.5deg);
+}
+35% {
+  transform: translate(-340px, -265px) rotate(31.5deg);
+}
+47% {
+  transform: translate(-300px, -320px) rotate(42.3deg);
+}
+58% {
+  transform: translate(-250px, -360px) rotate(52.2deg);
+}
+70% {
+  transform: translate(-200px, -390px) rotate(63deg);
+}
+84% {
+  transform: translate(-100px, -420px) rotate(73.8deg);
+}
+92% {
+  transform: translate(-40px, -435px) rotate(82.8deg);
+}
+100% {
+  transform: translate(0px, -440px) rotate(90deg);
+}
+`;
+
 export const FaceLayersContainer = styled.div`
   position: absolute;
   transform: translate(-50%, -50%);
@@ -91,6 +128,22 @@ export const InnerFaceLayersContainer = styled.div`
   animation: ${innerFaceMove} 8s infinite; // Adjust duration and iteration count as needed
 `;
 
+export const PipeObjectAnimation = styled.div`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 100px;
+  animation: ${pipeObjectMove} 2s infinite linear;
+`;
+
+export const PipeObjectAnimation2 = styled.div`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 100px;
+  animation: ${pipeObjectMove} 2s infinite linear 1s;
+`;
+
 export const AppContainer = styled.div`
   width: 100vw;
   height: 100vh;
@@ -110,6 +163,25 @@ export const FaceBackImage = styled.img`
   left: 50%;
   transform: translate(-50%, -50%);
   height: 100%;
+`;
+
+// Pipe is up against the right side of the screen, but isn't rendered on thinning screens
+export const BackgroundPipe = styled.img`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 600px;
+`;
+
+export const PipeCube = styled.img`
+  position: relative;
+  height: 100%;
+`;
+
+export const PipeTurret = styled.img`
+  position: relative;
+  height: 200%;
+  transform: translate(-10%, 0);
 `;
 
 export const FaceInnerBackImage = styled.img`

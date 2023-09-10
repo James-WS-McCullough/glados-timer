@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Box,
   Button,
   HStack,
   Input,
@@ -17,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import {
   AppContainer,
+  BackgroundPipe,
   FaceBackImage,
   FaceInnerBackImage,
   FaceInnerCoverImage,
@@ -26,6 +28,11 @@ import {
   FaceOuterCoverImage,
   InnerFaceLayersContainer,
   OuterFaceLayersContainer,
+  PipeCube,
+  PipeObject,
+  PipeObjectAnimation,
+  PipeObjectAnimation2,
+  PipeTurret,
 } from "./animationAndImageFormatting";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import MusicOffIcon from "@mui/icons-material/MusicOff";
@@ -246,6 +253,18 @@ function App() {
 
   return (
     <AppContainer>
+      {window.innerWidth > 1300 && (
+        <Box>
+          <BackgroundPipe src="pipe-underlay.png" alt="Background Pipe" />
+          <PipeObjectAnimation>
+            <PipeCube src="pipe-cube.png" alt="Pipe Cube" />
+          </PipeObjectAnimation>
+          <PipeObjectAnimation2>
+            <PipeTurret src="pipe-turret.png" alt="Pipe Cube" />
+          </PipeObjectAnimation2>
+          <BackgroundPipe src="pipe-overlay.png" alt="Background Pipe" />
+        </Box>
+      )}
       <FaceLayersContainer>
         <FaceBackImage src="face-back.png" alt="Face Back" />
         <OuterFaceLayersContainer>

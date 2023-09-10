@@ -72,7 +72,7 @@ const checkSpesificCases = ({
   if (hours === 0 && minutes === 0 && seconds === 10) {
     playSpesificLineRandom({
       line: "Glados_Line_10SecondsLeft",
-      maxNumber: 3,
+      maxNumber: 13,
       callback: () => setIsSpeaking(false),
     });
     return true;

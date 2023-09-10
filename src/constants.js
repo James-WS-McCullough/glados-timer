@@ -24,6 +24,25 @@ export const randomLineTimePosition = {
   21: "e",
   22: "e",
   23: "e",
+  24: "b",
+  25: "e",
+  26: "b",
+  27: "b",
+  28: "b",
+  29: "e",
+  30: "b",
+  31: "b",
+  32: "e",
+  33: "e",
+  34: "e",
+  35: "e",
+  36: "e",
+  37: "b",
+  38: "e",
+  39: "e",
+  40: "e",
+  41: "e",
+  42: "b",
 };
 
 export const talkativeScaleDescription = {
@@ -36,3 +55,5 @@ export const talkativeScaleDescription = {
 };
 
 export const importantMinutes = [1, 2, 5, 10, 15, 20, 30, 45];
+
+export const numberLinesThatAreAlwaysSingular = [4, 8];

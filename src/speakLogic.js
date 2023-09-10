@@ -1,4 +1,7 @@
-import { randomLineTimePosition } from "./constants";
+import {
+  numberLinesThatAreAlwaysSingular,
+  randomLineTimePosition,
+} from "./constants";
 import { padNumber } from "./utils";
 
 export const speakOppertunity = ({
@@ -191,8 +194,10 @@ const playSpesificLineRandom = ({ line, maxNumber, callback }) => {
 };
 
 const playRandomNumberLine = ({ minutes, hours, seconds, callback }) => {
-  // Random number min 1 max 8
-  const randomNum = Math.floor(Math.random() * 7) + 1;
+  // Random number min 1 max 16
+  const randomNum = Math.floor(Math.random() * 16) + 1;
+
+  const isSingular = numberLinesThatAreAlwaysSingular.includes(randomNum);
   // Play the intro sound, on callback play the time sound, on callback play the outro sound
   playIntroSound({
     number: randomNum,
@@ -201,6 +206,7 @@ const playRandomNumberLine = ({ minutes, hours, seconds, callback }) => {
         minutes: minutes,
         hours: hours,
         seconds: seconds,
+        isSingular: isSingular,
         callback: () =>
           playOutroSound({ number: randomNum, callback: callback }),
       }),
@@ -366,12 +372,18 @@ const playSound = ({ sound, callback }) => {
   });
 };
 
-const playTimeSound = ({ hours, minutes, seconds, callback }) => {
+const playTimeSound = ({
+  hours,
+  minutes,
+  seconds,
+  isSingular = false,
+  callback,
+}) => {
   // Plays the number of hours, then minutes, then seconds, then the callback. Play the 'and' sound between each time unit
 
   if (hours) {
     let hoursString = "Hours";
-    if (hours === 1) {
+    if (hours === 1 || isSingular) {
       hoursString = "Hour";
     }
 
@@ -382,7 +394,7 @@ const playTimeSound = ({ hours, minutes, seconds, callback }) => {
       callback: () => {
         if (minutes) {
           let minutesString = "Minutes";
-          if (minutes === 1) {
+          if (minutes === 1 || isSingular) {
             minutesString = "Minute";
           }
           playTimeUnitSound({
@@ -391,9 +403,13 @@ const playTimeSound = ({ hours, minutes, seconds, callback }) => {
             isContinuing: seconds && true,
             callback: () => {
               if (seconds) {
+                let secondsString = "Seconds";
+                if (seconds === 1 || isSingular) {
+                  secondsString = "Second";
+                }
                 playTimeUnitSound({
                   num: parseInt(seconds, 10),
-                  unit: "Seconds",
+                  unit: secondsString,
                   callback: callback,
                 });
               } else {
@@ -402,9 +418,13 @@ const playTimeSound = ({ hours, minutes, seconds, callback }) => {
             },
           });
         } else if (seconds) {
+          let secondsString = "Seconds";
+          if (seconds === 1 || isSingular) {
+            secondsString = "Second";
+          }
           playTimeUnitSound({
             num: parseInt(seconds, 10),
-            unit: "Seconds",
+            unit: secondsString,
             callback: callback,
             isContinuing: false,
           });
@@ -415,7 +435,7 @@ const playTimeSound = ({ hours, minutes, seconds, callback }) => {
     });
   } else if (minutes) {
     let minutesString = "Minutes";
-    if (minutes === 1) {
+    if (minutes === 1 || isSingular) {
       minutesString = "Minute";
     }
     playTimeUnitSound({
@@ -424,9 +444,13 @@ const playTimeSound = ({ hours, minutes, seconds, callback }) => {
       isContinuing: seconds && true,
       callback: () => {
         if (seconds) {
+          let secondsString = "Seconds";
+          if (seconds === 1 || isSingular) {
+            secondsString = "Second";
+          }
           playTimeUnitSound({
             num: parseInt(seconds, 10),
-            unit: "Seconds",
+            unit: secondsString,
             callback: callback,
           });
         } else {
@@ -435,9 +459,13 @@ const playTimeSound = ({ hours, minutes, seconds, callback }) => {
       },
     });
   } else if (seconds) {
+    let secondsString = "Seconds";
+    if (seconds === 1 || isSingular) {
+      secondsString = "Second";
+    }
     playTimeUnitSound({
       num: parseInt(seconds, 10),
-      unit: "Seconds",
+      unit: secondsString,
       callback: callback,
     });
   } else {

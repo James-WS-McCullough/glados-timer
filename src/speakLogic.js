@@ -1,6 +1,7 @@
 import {
   numberLinesThatAreAlwaysSingular,
   randomLineTimePosition,
+  subtitles,
 } from "./constants";
 import { padNumber } from "./utils";
 
@@ -190,12 +191,14 @@ export const playEndLine = ({ setIsSpeaking }) => {
   });
 };
 
-export const playPauseLine = ({ setIsSpeaking, isSpeaking }) => {
+export const playPauseLine = ({ setIsSpeaking, isSpeaking, setSubtitle }) => {
   if (isSpeaking) return;
   setIsSpeaking(true);
-  playSpesificLineRandom({
-    line: "Glados_Line_Pause",
-    maxNumber: 8,
+  const lineNumber = Math.floor(Math.random() * 8) + 1;
+
+  setSubtitle(subtitles["Glados_Line_Pause_" + lineNumber]);
+  playSound({
+    sound: `Glados_Line_Pause_${lineNumber}`,
     callback: () => setIsSpeaking(false),
   });
 };

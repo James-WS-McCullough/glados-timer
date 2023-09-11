@@ -27,8 +27,6 @@ import {
   InnerFaceLayersContainer,
   OuterFaceLayersContainer,
 } from "./animationAndImageFormatting";
-import MusicNoteIcon from "@mui/icons-material/MusicNote";
-import MusicOffIcon from "@mui/icons-material/MusicOff";
 import SettingsIcon from "@mui/icons-material/Settings";
 import PauseIcon from "@mui/icons-material/Pause";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
@@ -75,6 +73,8 @@ function App() {
     seconds: 0,
   });
   const [timerActive, setTimerActive] = useState(false);
+  const [subtitle, setSubtitle] = useState("");
+  const [showSubtitle, setShowSubtitle] = useState(false);
   const {
     isOpen: isOpenSetTimer,
     onOpen: onOpenSetTimer,
@@ -159,6 +159,12 @@ function App() {
       setPomodoroBreakMinutes(pomodoroBreakMinutesFromLocalStorage);
     }
   }, []);
+
+  useEffect(() => {
+    if (!isSpeaking) {
+      setSubtitle("");
+    }
+  }, [isSpeaking]);
 
   const callSpeakOppertunity = () => {
     console.log("callSpeakOppertunity at ", hours, minutes, seconds, "");
@@ -312,6 +318,22 @@ function App() {
           {`${padNumber(seconds, 2)}`}
         </div>
       )}
+      <div
+        style={{
+          position: "absolute",
+          top: "30px",
+          width: "100%",
+          textAlign: "center",
+          fontSize: "1rem",
+          fontWeight: "bold",
+          fontFamily: "monospace",
+          width: "80%",
+          color: "lightblue",
+        }}
+      >
+        {subtitle}
+      </div>
+
       <HStack position="absolute" bottom="30px" left="30px">
         <Button
           colorScheme="orange"
@@ -333,6 +355,7 @@ function App() {
               playPauseLine({
                 setIsSpeaking: setIsSpeaking,
                 isSpeaking: isSpeaking,
+                setSubtitle: setSubtitle,
               });
             }}
           >
@@ -546,6 +569,15 @@ function App() {
                 <Text fontFamily="monospace">
                   {talkativeScaleDescription[talkativeScale]}
                 </Text>
+              </HStack>
+              // Switch for subtitles
+              <HStack spacing={4} marginBottom="3" marginTop="3">
+                <Switch
+                  colorScheme="orange"
+                  isChecked={showSubtitle}
+                  onChange={() => setShowSubtitle(!showSubtitle)}
+                />
+                <Text fontFamily="monospace">Show Subtitles</Text>
               </HStack>
             </VStack>
           </ModalBody>

@@ -50,11 +50,18 @@ export const speakOppertunity = ({
       callback: () => setIsSpeaking(false),
     });
     return;
-  } else {
+  }
+  if (randomNum <= 8) {
     playSimpleTimeAndRandomLine({
       minutes: minutes,
       hours: hours,
       seconds: seconds,
+      callback: () => setIsSpeaking(false),
+    });
+    return;
+  }
+  if (randomNum <= 10) {
+    justPlayRandomLine({
       callback: () => setIsSpeaking(false),
     });
     return;
@@ -316,7 +323,7 @@ const playSimpleTimeAndRandomLine = ({ minutes, hours, seconds, callback }) => {
 const justPlayRandomLine = ({ callback }) => {
   playSpesificLineRandom({
     line: "Glados_Line_Random",
-    maxNumber: 3,
+    maxNumber: 42,
     callback: callback,
   });
 };

@@ -7,15 +7,15 @@ const moveUpDownLeftRight = keyframes`
   }
   
   10% {
-    transform: translateY(-15px) translateX(30px); // Moves up and right
+    transform: translateY(-4%) translateX(7%); // Moves up and right
   }
 
   20% {
-    transform: translateY(-30px) translateX(0); // Moves up
+    transform: translateY(-7%) translateX(0); // Moves up
   }
   
   30% {
-    transform: translateY(-15px) translateX(-30px); // Moves up and left
+    transform: translateY(-4%) translateX(-7%); // Moves up and left
   }
 
   40% {
@@ -23,15 +23,15 @@ const moveUpDownLeftRight = keyframes`
   }
 
   50% {
-    transform: translateY(15px) translateX(30px) rotate(5deg); // Moves down and right
+    transform: translateY(4%) translateX(7%) rotate(5deg); // Moves down and right
   }
 
   60% {
-    transform: translateY(30px) translateX(0); // Moves down
+    transform: translateY(7%) translateX(0); // Moves down
   }
 
   70% {
-    transform: translateY(15px) translateX(-30px) rotate(-5deg); // Moves down and left
+    transform: translateY(4%) translateX(-7%) rotate(-5deg); // Moves down and left
   }
 
   80% {
@@ -39,27 +39,27 @@ const moveUpDownLeftRight = keyframes`
   }
 
   90% {
-    transform: translateY(-15px) translateX(30px); // Moves up and right
+    transform: translateY(-4%) translateX(7%); // Moves up and right
   }
 `;
 
 const outerFaceMove = keyframes`
   0%, 40%, 100% {
-    transform: translateY(0px);
+    transform: translateY(0);
   }
   
   50%, 90% {
-    transform: translateY(20px);
+    transform: translateY(4%);
   }
 `;
 
 const innerFaceMove = keyframes`
 0%, 10%, 100% {
-  transform: translateY(-30px);
+  transform: translateY(-6%);
 }
 
 20%, 30%, 70%, 80% {
-  transform: translateY(30px);
+  transform: translateY(6%);
 }
 
 40%, 50%, 60%, 90% {

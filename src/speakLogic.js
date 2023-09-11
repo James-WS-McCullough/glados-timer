@@ -78,17 +78,10 @@ const checkSpesificCases = ({
     return true;
   }
 
-  // Chance to play a generic line instead of a spesific line
-  const randomNum = Math.floor(Math.random() * 10) + 1;
-  if (randomNum <= 2) {
-    return false;
-  }
-
   if (
     hours === halfWayPoint.hours &&
     minutes === halfWayPoint.minutes &&
-    seconds === halfWayPoint.seconds &&
-    seconds > 14
+    seconds === halfWayPoint.seconds
   ) {
     playSpesificLineRandom({
       line: "Glados_Line_HalfWay",
@@ -96,6 +89,12 @@ const checkSpesificCases = ({
       callback: () => setIsSpeaking(false),
     });
     return true;
+  }
+
+  // Chance to play a generic line instead of a spesific line
+  const randomNum = Math.floor(Math.random() * 10) + 1;
+  if (randomNum <= 2) {
+    return false;
   }
 
   if (hours === 0 && minutes === 5 && seconds === 0) {
@@ -170,10 +169,17 @@ export const playRestSkipLine = ({ setIsSpeaking, isSpeaking }) => {
 
 export const playEndLine = ({ setIsSpeaking }) => {
   setIsSpeaking(true);
+
   playSpesificLineRandom({
-    line: "Glados_Line_TimeUp",
+    line: "TimeUp_Sound",
     maxNumber: 13,
-    callback: () => setIsSpeaking(false),
+    callback: () => {
+      playSpesificLineRandom({
+        line: "Glados_Line_TimeUp",
+        maxNumber: 13,
+        callback: () => setIsSpeaking(false),
+      });
+    },
   });
 };
 

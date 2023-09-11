@@ -97,7 +97,8 @@ function App() {
           if (
             hours === halfWayPoint.hours &&
             minutes === halfWayPoint.minutes &&
-            seconds === halfWayPoint.seconds
+            seconds === halfWayPoint.seconds &&
+            (seconds > 20) | (minutes > 0) | (hours > 0)
           ) {
             callSpeakOppertunity();
           } else if (hours === 0 && minutes === 0 && seconds === 10) {

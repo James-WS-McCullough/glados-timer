@@ -278,7 +278,7 @@ function App() {
       {!(seconds > 0 || minutes > 0 || hours > 0) && !timerActive && (
         <Button
           position="absolute"
-          bottom="40px"
+          bottom="100px"
           colorScheme="orange"
           width="400px"
           height="100px"

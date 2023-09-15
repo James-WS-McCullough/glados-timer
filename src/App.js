@@ -180,6 +180,7 @@ function App() {
       isSpeaking: isSpeaking,
       isPomodoro: isPomodoro,
       pomodoroIsWork: pomodoroIsWork,
+      setSubtitle: setSubtitle,
     });
   };
 
@@ -417,16 +418,7 @@ function App() {
           <Button
             colorScheme="blue"
             onClick={() => {
-              speakOppertunity({
-                hours: hours,
-                minutes: minutes,
-                seconds: seconds,
-                halfWayPoint: halfWayPoint,
-                setIsSpeaking: setIsSpeaking,
-                isSpeaking: isSpeaking,
-                isPomodoro: isPomodoro,
-                pomodoroIsWork: pomodoroIsWork,
-              });
+              callSpeakOppertunity();
             }}
             isDisabled={isSpeaking}
           >
@@ -515,6 +507,7 @@ function App() {
                 playStartLine({
                   setIsSpeaking: setIsSpeaking,
                   isSpeaking: isSpeaking,
+                  setSubtitle: setSubtitle,
                 });
                 onCloseSetTimer();
               }}

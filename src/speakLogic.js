@@ -14,6 +14,7 @@ export const speakOppertunity = ({
   setIsSpeaking,
   isPomodoro,
   pomodoroIsWork,
+  setSubtitle,
 }) => {
   // If the time equals the half way point, play the half way point sound
   if (isSpeaking) return;
@@ -25,6 +26,7 @@ export const speakOppertunity = ({
     seconds: seconds,
     halfWayPoint: halfWayPoint,
     setIsSpeaking: setIsSpeaking,
+    setSubtitle: setSubtitle,
   });
   if (isSpesificCase) return;
 
@@ -48,6 +50,7 @@ export const speakOppertunity = ({
       minutes: minutes,
       hours: hours,
       seconds: seconds,
+      setSubtitle: setSubtitle,
       callback: () => setIsSpeaking(false),
     });
     return;
@@ -57,12 +60,14 @@ export const speakOppertunity = ({
       minutes: minutes,
       hours: hours,
       seconds: seconds,
+      setSubtitle: setSubtitle,
       callback: () => setIsSpeaking(false),
     });
     return;
   }
   if (randomNum <= 10) {
     justPlayRandomLine({
+      setSubtitle: setSubtitle,
       callback: () => setIsSpeaking(false),
     });
     return;
@@ -75,12 +80,14 @@ const checkSpesificCases = ({
   seconds,
   halfWayPoint,
   setIsSpeaking,
+  setSubtitle,
 }) => {
   // If it's the half way point and the timer is greater than 14 seconds, play the half way point sound
   if (hours === 0 && minutes === 0 && seconds === 10) {
     playSpesificLineRandom({
       line: "Glados_Line_10SecondsLeft",
       maxNumber: 13,
+      setSubtitle,
       callback: () => setIsSpeaking(false),
     });
     return true;
@@ -94,6 +101,7 @@ const checkSpesificCases = ({
     playSpesificLineRandom({
       line: "Glados_Line_HalfWay",
       maxNumber: 3,
+      setSubtitle,
       callback: () => setIsSpeaking(false),
     });
     return true;
@@ -109,6 +117,7 @@ const checkSpesificCases = ({
     playSpesificLineRandom({
       line: "Glados_Line_5MinutesLeft",
       maxNumber: 3,
+      setSubtitle,
       callback: () => setIsSpeaking(false),
     });
     return true;
@@ -118,6 +127,7 @@ const checkSpesificCases = ({
     playSpesificLineRandom({
       line: "Glados_Line_2MinutesLeft",
       maxNumber: 3,
+      setSubtitle,
       callback: () => setIsSpeaking(false),
     });
     return true;
@@ -127,6 +137,7 @@ const checkSpesificCases = ({
     playSpesificLineRandom({
       line: "Glados_Line_1MinuteLeft",
       maxNumber: 3,
+      setSubtitle,
       callback: () => setIsSpeaking(false),
     });
     return true;
@@ -135,12 +146,13 @@ const checkSpesificCases = ({
   return false;
 };
 
-export const playStartLine = ({ setIsSpeaking, isSpeaking }) => {
+export const playStartLine = ({ setIsSpeaking, isSpeaking, setSubtitle }) => {
   if (isSpeaking) return;
   setIsSpeaking(true);
   playSpesificLineRandom({
     line: "Glados_Line_TimerStart",
     maxNumber: 13,
+    setSubtitle,
     callback: () => setIsSpeaking(false),
   });
 };
@@ -253,9 +265,11 @@ export const playByeLine = ({ setIsSpeaking, isSpeaking }) => {
   });
 };
 
-const playSpesificLineRandom = ({ line, maxNumber, callback }) => {
+const playSpesificLineRandom = ({ line, maxNumber, setSubtitle, callback }) => {
   // Random number min 1 max maxNumber
   const randomNum = Math.floor(Math.random() * maxNumber) + 1;
+
+  if (setSubtitle) setSubtitle(subtitles[`${line}_${randomNum}`]);
 
   playSound({
     sound: `${line}_${randomNum}`,
@@ -263,11 +277,52 @@ const playSpesificLineRandom = ({ line, maxNumber, callback }) => {
   });
 };
 
-const playRandomNumberLine = ({ minutes, hours, seconds, callback }) => {
+const createTimeString = ({ hours, minutes, seconds, isSingular }) => {
+  let timeString = "";
+  if (hours) {
+    timeString += hours + (hours == 1 || isSingular ? " hour" : "hours");
+  }
+  if (hours && (minutes || seconds)) {
+    timeString += " and ";
+  }
+  if (minutes) {
+    timeString +=
+      minutes + (minutes == 1 || isSingular ? " minute" : " minutes");
+  }
+  if (minutes && seconds) {
+    timeString += " and ";
+  }
+  if (seconds) {
+    timeString +=
+      seconds + (seconds == 1 || isSingular ? " second" : " seconds");
+  }
+  return timeString;
+};
+
+const playRandomNumberLine = ({
+  minutes,
+  hours,
+  seconds,
+  setSubtitle,
+  callback,
+}) => {
   // Random number min 1 max 16
   const randomNum = Math.floor(Math.random() * 16) + 1;
 
   const isSingular = numberLinesThatAreAlwaysSingular.includes(randomNum);
+
+  // Set the subtitle to the random number line with the time in the middle
+  setSubtitle(
+    subtitles["Glados_NumberLine_Start_" + randomNum] +
+      createTimeString({
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds,
+        isSingular,
+      }) +
+      subtitles["Glados_NumberLine_End_" + randomNum]
+  );
+
   // Play the intro sound, on callback play the time sound, on callback play the outro sound
   playIntroSound({
     number: randomNum,
@@ -283,7 +338,13 @@ const playRandomNumberLine = ({ minutes, hours, seconds, callback }) => {
   });
 };
 
-const playSimpleTimeAndRandomLine = ({ minutes, hours, seconds, callback }) => {
+const playSimpleTimeAndRandomLine = ({
+  minutes,
+  hours,
+  seconds,
+  setSubtitle,
+  callback,
+}) => {
   const lineNumber = Math.floor(Math.random() * 42) + 1;
 
   let playBefore = true;
@@ -294,6 +355,20 @@ const playSimpleTimeAndRandomLine = ({ minutes, hours, seconds, callback }) => {
     if (randomNum === 1) {
       playBefore = false;
     }
+  }
+
+  if (playBefore) {
+    setSubtitle(
+      createTimeString({ hours: hours, minutes: minutes, seconds: seconds }) +
+        " " +
+        subtitles["Glados_Line_Random_" + lineNumber]
+    );
+  } else {
+    setSubtitle(
+      subtitles["Glados_Line_Random_" + lineNumber] +
+        " " +
+        createTimeString({ hours: hours, minutes: minutes, seconds: seconds })
+    );
   }
 
   if (playBefore) {
@@ -323,10 +398,11 @@ const playSimpleTimeAndRandomLine = ({ minutes, hours, seconds, callback }) => {
   }
 };
 
-const justPlayRandomLine = ({ callback }) => {
+const justPlayRandomLine = ({ setSubtitle, callback }) => {
   playSpesificLineRandom({
     line: "Glados_Line_Random",
     maxNumber: 42,
+    setSubtitle,
     callback: callback,
   });
 };

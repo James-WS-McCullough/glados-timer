@@ -10,6 +10,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Select,
   Switch,
   Text,
   VStack,
@@ -17,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import {
   AppContainer,
+  Background,
   FaceBackImage,
   FaceInnerBackImage,
   FaceInnerCoverImage,
@@ -66,6 +68,7 @@ function App() {
   const [pomodoroWorkMinutes, setPomodoroWorkMinutes] = useState("25");
   const [pomodoroBreakMinutes, setPomodoroBreakMinutes] = useState("5");
   const [pomodoroIsWork, setPomodoroIsWork] = useState(true);
+  const [currentTimer, setCurrentTimer] = useState("GLaDOS");
   // Save half way point for the timer
   const [halfWayPoint, setHalfWayPoint] = useState({
     hours: 0,
@@ -253,35 +256,40 @@ function App() {
 
   return (
     <AppContainer>
-      <FaceLayersContainer>
-        <FaceBackImage src="face-back.png" alt="Face Back" />
-        <OuterFaceLayersContainer>
-          <InnerFaceLayersContainer>
-            <FaceInnerBackImage
-              src="face-inner-back.png"
-              alt="Face Inner Back"
+      {currentTimer === "GLaDOS" && (
+        <FaceLayersContainer>
+          <FaceBackImage src="face-back.png" alt="Face Back" />
+          <OuterFaceLayersContainer>
+            <InnerFaceLayersContainer>
+              <FaceInnerBackImage
+                src="face-inner-back.png"
+                alt="Face Inner Back"
+              />
+            </InnerFaceLayersContainer>
+            <FaceInnerCoverImage
+              src="face-inner-cover.png"
+              alt="Face Inner Cover"
             />
-          </InnerFaceLayersContainer>
-          <FaceInnerCoverImage
-            src="face-inner-cover.png"
-            alt="Face Inner Cover"
-          />
-          <InnerFaceLayersContainer>
-            <FaceInnerFrontImage
-              src="face-inner-front.png"
-              alt="Face Inner Front"
+            <InnerFaceLayersContainer>
+              <FaceInnerFrontImage
+                src="face-inner-front.png"
+                alt="Face Inner Front"
+              />
+            </InnerFaceLayersContainer>
+            <FaceInnerFrontCoverImage
+              src="face-inner-front-cover.png"
+              alt="Face Inner Front Cover"
             />
-          </InnerFaceLayersContainer>
-          <FaceInnerFrontCoverImage
-            src="face-inner-front-cover.png"
-            alt="Face Inner Front Cover"
+          </OuterFaceLayersContainer>
+          <FaceOuterCoverImage
+            src="face-outer-cover.png"
+            alt="Face Outer Cover"
           />
-        </OuterFaceLayersContainer>
-        <FaceOuterCoverImage
-          src="face-outer-cover.png"
-          alt="Face Outer Cover"
-        />
-      </FaceLayersContainer>
+        </FaceLayersContainer>
+      )}
+      {currentTimer === "Cave Johnson" && (
+        <Background src="cave-johnson.png" alt="Cave Johnson" />
+      )}
       {!(seconds > 0 || minutes > 0 || hours > 0) && !timerActive && (
         <Button
           position="absolute"
@@ -579,9 +587,20 @@ function App() {
                 />
                 <Text fontFamily="monospace">Show Subtitles</Text>
               </HStack>
+              <Text fontFamily="monospace" fontWeight="bold" marginBottom="3">
+                Timer Select (Not Implemented Yet)
+              </Text>
+              <Select
+                fontFamily="monospace"
+                value={currentTimer}
+                onChange={(e) => setCurrentTimer(e.target.value)}
+              >
+                <option value="GLaDOS">GLaDOS</option>
+                <option value="Cave Johnson">Cave Johnson</option>
+                <option value="PotatOS">Potato GLaDOS</option>
+              </Select>
             </VStack>
           </ModalBody>
-
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={onCloseSettings}>
               Close

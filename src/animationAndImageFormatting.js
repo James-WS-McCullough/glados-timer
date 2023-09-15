@@ -91,6 +91,7 @@ export const InnerFaceLayersContainer = styled.div`
   animation: ${innerFaceMove} 8s infinite; // Adjust duration and iteration count as needed
 `;
 
+// App container should accept a prop for the background image
 export const AppContainer = styled.div`
   width: 100vw;
   height: 100vh;
@@ -102,6 +103,12 @@ export const AppContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+`;
+
+export const Background = styled.img`
+  position: absolute;
+  width: 100%;
+  height: 100%;
 `;
 
 export const FaceBackImage = styled.img`

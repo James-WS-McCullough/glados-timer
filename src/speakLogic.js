@@ -187,7 +187,7 @@ export const playRestSkipLine = ({ setIsSpeaking, isSpeaking }) => {
   });
 };
 
-export const playEndLine = ({ setIsSpeaking }) => {
+export const playEndLine = ({ setIsSpeaking, setSubtitle }) => {
   setIsSpeaking(true);
 
   playSpesificLineRandom({
@@ -197,6 +197,7 @@ export const playEndLine = ({ setIsSpeaking }) => {
       playSpesificLineRandom({
         line: "Glados_Line_TimeUp",
         maxNumber: 13,
+        setSubtitle,
         callback: () => setIsSpeaking(false),
       });
     },
@@ -225,13 +226,14 @@ export const playResumeLine = ({ setIsSpeaking, isSpeaking }) => {
   });
 };
 
-export const playWelcomeLine = ({ setIsSpeaking, isSpeaking }) => {
+export const playWelcomeLine = ({ setIsSpeaking, isSpeaking, setSubtitle }) => {
   if (isSpeaking) return;
   setIsSpeaking(true);
   playSpesificLineRandom({
     line: "Glados_Line_Welcome",
     maxNumber: 8,
     callback: () => setIsSpeaking(false),
+    setSubtitle,
   });
 };
 

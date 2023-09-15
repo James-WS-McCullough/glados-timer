@@ -196,7 +196,7 @@ function App() {
         setTimerPomodoro({ isWork: true });
       }
     } else {
-      playEndLine({ setIsSpeaking: setIsSpeaking });
+      playEndLine({ setIsSpeaking: setIsSpeaking, setSubtitle: setSubtitle });
       setTimerActive(false);
     }
   };
@@ -302,7 +302,11 @@ function App() {
           fontFamily="monospace"
           onClick={() => {
             onOpenSetTimer();
-            playWelcomeLine({ setIsSpeaking: setIsSpeaking, isSpeaking });
+            playWelcomeLine({
+              setIsSpeaking: setIsSpeaking,
+              isSpeaking,
+              setSubtitle,
+            });
           }}
         >
           Start

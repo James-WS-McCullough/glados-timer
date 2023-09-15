@@ -70,7 +70,7 @@ export const subtitles = {
     "A mere ten seconds left. Time's fleeting nature becomes evident, doesn't it?",
   Glados_Line_10SecondsLeft_6:
     "Brace yourself for the inevitable. You have a whole ten seconds.",
-  Glados_Line_10SecondsLeft_7: "The end is near. Ten seconds to be exact.",
+  Glados_Line_10SecondsLeft_7: "The end is near. Ten seconds away to be exact.",
   Glados_Line_10SecondsLeft_8:
     "Prepare for conclusion in ten... nine... well, you know the rest.",
   Glados_Line_10SecondsLeft_9:

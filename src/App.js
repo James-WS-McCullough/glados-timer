@@ -181,22 +181,33 @@ function App() {
       isPomodoro: isPomodoro,
       pomodoroIsWork: pomodoroIsWork,
       setSubtitle: setSubtitle,
+      currentTimer: currentTimer,
     });
   };
 
   const handleEndTimer = () => {
     if (isPomodoro) {
       if (pomodoroIsWork) {
-        playRestSessionStartLine({ setIsSpeaking: setIsSpeaking });
+        playRestSessionStartLine({
+          setIsSpeaking: setIsSpeaking,
+          currentTimer,
+        });
         setPomodoroIsWork(false);
         setTimerPomodoro({ isWork: false });
       } else {
-        playWorkSessionStartLine({ setIsSpeaking: setIsSpeaking });
+        playWorkSessionStartLine({
+          setIsSpeaking: setIsSpeaking,
+          currentTimer,
+        });
         setPomodoroIsWork(true);
         setTimerPomodoro({ isWork: true });
       }
     } else {
-      playEndLine({ setIsSpeaking: setIsSpeaking, setSubtitle: setSubtitle });
+      playEndLine({
+        setIsSpeaking: setIsSpeaking,
+        setSubtitle: setSubtitle,
+        currentTimer,
+      });
       setTimerActive(false);
     }
   };
@@ -306,6 +317,7 @@ function App() {
               setIsSpeaking: setIsSpeaking,
               isSpeaking,
               setSubtitle,
+              currentTimer,
             });
           }}
         >
@@ -355,6 +367,8 @@ function App() {
             playSettingsLine({
               setIsSpeaking: setIsSpeaking,
               isSpeaking: isSpeaking,
+              setSubtitle: setSubtitle,
+              currentTimer,
             });
           }}
         >
@@ -369,6 +383,7 @@ function App() {
                 setIsSpeaking: setIsSpeaking,
                 isSpeaking: isSpeaking,
                 setSubtitle: setSubtitle,
+                currentTimer,
               });
             }}
           >
@@ -379,7 +394,7 @@ function App() {
           <Button
             colorScheme="orange"
             onClick={() => {
-              playResumeLine({ setIsSpeaking: setIsSpeaking });
+              playResumeLine({ setIsSpeaking: setIsSpeaking, currentTimer });
               setTimerActive(true);
             }}
           >
@@ -397,6 +412,8 @@ function App() {
               playResetLine({
                 setIsSpeaking: setIsSpeaking,
                 isSpeaking: isSpeaking,
+                setSubtitle: setSubtitle,
+                currentTimer,
               });
             }}
           >
@@ -412,6 +429,7 @@ function App() {
               playRestSkipLine({
                 setIsSpeaking: setIsSpeaking,
                 isSpeaking: isSpeaking,
+                currentTimer,
               });
             }}
           >
@@ -512,6 +530,7 @@ function App() {
                   setIsSpeaking: setIsSpeaking,
                   isSpeaking: isSpeaking,
                   setSubtitle: setSubtitle,
+                  currentTimer,
                 });
                 onCloseSetTimer();
               }}

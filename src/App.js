@@ -48,7 +48,7 @@ import {
   playWelcomeLine,
   playWorkSessionStartLine,
   speakOppertunity,
-} from "./speakLogic";
+} from "./speakLogic/speakLogic";
 import { padNumber } from "./utils";
 import { importantMinutes, talkativeScaleDescription } from "./constants";
 import SmsIcon from "@mui/icons-material/Sms";
@@ -436,17 +436,18 @@ function App() {
             <SkipNextIcon />
           </Button>
         )}
-        {(seconds > 0 || minutes > 0 || hours > 0) && (
-          <Button
-            colorScheme="blue"
-            onClick={() => {
-              callSpeakOppertunity();
-            }}
-            isDisabled={isSpeaking}
-          >
-            <SmsIcon />
-          </Button>
-        )}
+        {(seconds > 0 || minutes > 0 || hours > 0) &&
+          currentTimer === "GLaDOS" && (
+            <Button
+              colorScheme="blue"
+              onClick={() => {
+                callSpeakOppertunity();
+              }}
+              isDisabled={isSpeaking}
+            >
+              <SmsIcon />
+            </Button>
+          )}
       </HStack>
       <Modal isOpen={isOpenSetTimer} onClose={onCloseSetTimer}>
         <ModalOverlay />
@@ -531,6 +532,9 @@ function App() {
                   isSpeaking: isSpeaking,
                   setSubtitle: setSubtitle,
                   currentTimer,
+                  hours: parseInt(timeInput.hours),
+                  minutes: parseInt(timeInput.minutes),
+                  seconds: parseInt(timeInput.seconds),
                 });
                 onCloseSetTimer();
               }}
@@ -604,7 +608,7 @@ function App() {
                 <Text fontFamily="monospace">Show Subtitles</Text>
               </HStack>
               <Text fontFamily="monospace" fontWeight="bold" marginBottom="3">
-                Timer Select (Not Implemented Yet)
+                Timer Select (WIP)
               </Text>
               <Select
                 fontFamily="monospace"
@@ -613,7 +617,7 @@ function App() {
               >
                 <option value="GLaDOS">GLaDOS</option>
                 <option value="Cave Johnson">Cave Johnson</option>
-                <option value="PotatOS">Potato GLaDOS</option>
+                {/* <option value="PotatOS">Potato GLaDOS</option> */}
               </Select>
             </VStack>
           </ModalBody>

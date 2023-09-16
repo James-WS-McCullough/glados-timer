@@ -105,10 +105,12 @@ export const AppContainer = styled.div`
   justify-content: center;
 `;
 
+// Use the background img property to set the background image
 export const Background = styled.img`
   position: absolute;
   width: 100%;
   height: 100%;
+  object-fit: cover;
 `;
 
 export const FaceBackImage = styled.img`

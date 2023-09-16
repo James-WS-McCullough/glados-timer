@@ -1,4 +1,10 @@
 import {
+  playEndLineCave,
+  playStartLineCave,
+  playWelcomeLineCave,
+  speakOppertunityCave,
+} from "./speakLogicCave";
+import {
   playByeLineGlados,
   playEndLineGlados,
   playPauseLineGlados,
@@ -11,7 +17,7 @@ import {
   playWelcomeLineGlados,
   playWorkSessionStartLineGlados,
   speakOppertunityGlados,
-} from "./speakLogic/speakLogicGlados";
+} from "./speakLogicGlados";
 
 export const speakOppertunity = ({
   hours,
@@ -39,6 +45,19 @@ export const speakOppertunity = ({
         setSubtitle: setSubtitle,
       });
       break;
+    case "Cave Johnson":
+      speakOppertunityCave({
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds,
+        halfWayPoint: halfWayPoint,
+        isSpeaking: isSpeaking,
+        setIsSpeaking: setIsSpeaking,
+        isPomodoro: isPomodoro,
+        pomodoroIsWork: pomodoroIsWork,
+        setSubtitle: setSubtitle,
+      });
+      break;
   }
 };
 
@@ -47,6 +66,9 @@ export const playStartLine = ({
   isSpeaking,
   currentTimer,
   setSubtitle,
+  hours,
+  minutes,
+  seconds,
 }) => {
   switch (currentTimer) {
     case "GLaDOS":
@@ -54,6 +76,16 @@ export const playStartLine = ({
         setIsSpeaking: setIsSpeaking,
         isSpeaking: isSpeaking,
         setSubtitle: setSubtitle,
+      });
+      break;
+    case "Cave Johnson":
+      playStartLineCave({
+        setIsSpeaking: setIsSpeaking,
+        isSpeaking: isSpeaking,
+        setSubtitle: setSubtitle,
+        hours,
+        minutes,
+        seconds,
       });
       break;
   }
@@ -112,6 +144,12 @@ export const playEndLine = ({ setIsSpeaking, setSubtitle, currentTimer }) => {
         setSubtitle: setSubtitle,
       });
       break;
+    case "Cave Johnson":
+      playEndLineCave({
+        setIsSpeaking: setIsSpeaking,
+        setSubtitle: setSubtitle,
+      });
+      break;
   }
 };
 
@@ -152,6 +190,13 @@ export const playWelcomeLine = ({
   switch (currentTimer) {
     case "GLaDOS":
       playWelcomeLineGlados({
+        setIsSpeaking: setIsSpeaking,
+        isSpeaking: isSpeaking,
+        setSubtitle: setSubtitle,
+      });
+      break;
+    case "Cave Johnson":
+      playWelcomeLineCave({
         setIsSpeaking: setIsSpeaking,
         isSpeaking: isSpeaking,
         setSubtitle: setSubtitle,

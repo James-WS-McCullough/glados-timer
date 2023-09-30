@@ -1,4 +1,5 @@
 import {
+  GladosRandomLinesNumber,
   numberLinesThatAreAlwaysSingular,
   randomLineTimePosition,
   subtitles,
@@ -370,7 +371,7 @@ const playSimpleTimeAndRandomLine = ({
   setSubtitle,
   callback,
 }) => {
-  const lineNumber = Math.floor(Math.random() * 42) + 1;
+  const lineNumber = Math.floor(Math.random() * GladosRandomLinesNumber) + 1;
 
   let playBefore = true;
   if (randomLineTimePosition?.[lineNumber] === "a") {
@@ -426,7 +427,7 @@ const playSimpleTimeAndRandomLine = ({
 const justPlayRandomLine = ({ setSubtitle, callback }) => {
   playSpesificLineRandom({
     line: "Glados_Line_Random",
-    maxNumber: 42,
+    maxNumber: GladosRandomLinesNumber,
     setSubtitle,
     callback: callback,
   });

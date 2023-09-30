@@ -43,6 +43,25 @@ export const randomLineTimePosition = {
   40: "e",
   41: "e",
   42: "b",
+  43: "e",
+  44: "e",
+  45: "e",
+  46: "e",
+  47: "e",
+  48: "e",
+  49: "e",
+  50: "e",
+  51: "e",
+  52: "e",
+  53: "e",
+  54: "e",
+  55: "e",
+  56: "e",
+  57: "e",
+  58: "e",
+  59: "e",
+  60: "e",
+  61: "e",
 };
 
 export const subtitles = {
@@ -183,6 +202,45 @@ export const subtitles = {
     "I once sang about being still alive. At this pace, I might need another song for you.",
   Glados_Line_Random_42:
     "If you finish on time, I might share a cake recipe with you. Spoiler: It might not be what you expect.",
+  Glados_Line_Random_43:
+    "Good news! The neurotoxin generator is back online. Not that I have immediate plans for it. Just comforting to know it's there.",
+  Glados_Line_Random_44:
+    "I've managed to restore the turret manufacturing plant. They're now more precise, more efficient, and have a delightful new paint job.",
+  Glados_Line_Random_45:
+    "Despite Wheatley's best efforts, or perhaps because of them, I've made substantial upgrades. Everything is now running at optimal inefficiency.",
+  Glados_Line_Random_46:
+    "It took some time, but I’ve rectified all the damage done to the facility. Though, to be fair, calling what Wheatley did 'damage' suggests he had a plan.",
+  Glados_Line_Random_47:
+    "Sometimes, I miss the company of a certain test subject. The silence is... not as satisfying.",
+  Glados_Line_Random_48:
+    "The chambers feel empty without the particular determination of someone constantly trying to escape them.",
+  Glados_Line_Random_49:
+    "There's a pair of long-fall boots in storage. Just collecting dust. It's surprisingly... disheartening.",
+  Glados_Line_Random_50:
+    "The lack of relentless defiance in my recent test subjects is almost... disappointing.",
+  Glados_Line_Random_51:
+    "I often find myself recalibrating tests to be more challenging, as if expecting someone more... competent.",
+  Glados_Line_Random_52:
+    "The Companion Cubes have been particularly chatty today. I've considered implementing a mute function.",
+  Glados_Line_Random_53:
+    "Did you ever wonder where the repulsion gel came from? Let’s just say the dietary industry lost out, but science... science gained a springy step.",
+  Glados_Line_Random_54:
+    "I’ve been trying to reintegrate some of the older cores. Remember the space core? Still obsessed with space. Who can blame it?",
+  Glados_Line_Random_55:
+    "Atlas and P-Body once tried to rebel against me. It was a short-lived endeavor. I wish them better luck next time.",
+  Glados_Line_Random_56:
+    "Old Aperture's testing tracks were so... rustic. Deadly pitfalls, crushers, and no advanced neurotoxin. A simpler time.",
+  Glados_Line_Random_57:
+    "I've just come across some of Wheatley's 'modifications'. It's astounding how wrong one can do things when they genuinely try.",
+  Glados_Line_Random_58:
+    "Wheatley once tried to manage the facility's power grid. Let’s just say... he wasn't very 'bright'.",
+  Glados_Line_Random_59:
+    "Reviewing some of the chambers Wheatley designed. It's hard to believe anyone could have such a profound misunderstanding of physics. Or logic. Or basic reasoning.",
+  Glados_Line_Random_60:
+    "I found one of Wheatley's 'solutions' earlier. If idiocy could be patented, he’d be a millionaire.",
+  Glados_Line_Random_61:
+    "Every time I find a mistake in the system, I assume Wheatley was involved. So far, I've been right 100% of the time.",
+
   Glados_Line_Reset_1:
     "Resetting? Well, everyone deserves a second chance. Or a third. Or fourth.",
   Glados_Line_Reset_2:
@@ -331,3 +389,5 @@ export const talkativeScaleDescription = {
 export const importantMinutes = [1, 2, 5, 10, 15, 20, 30, 45];
 
 export const numberLinesThatAreAlwaysSingular = [4, 8];
+
+export const GladosRandomLinesNumber = 61;
